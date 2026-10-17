@@ -1,0 +1,19 @@
+# Class Forge 2K27
+
+A phone-first, offline, single-file web page for generating **fictional NBA 2K27 draft classes** that you build by hand in 2K27's draft class editor (MyNBA user-created classes).
+
+**Live:** https://browc814-spec.github.io/class-forge/
+
+## What it does
+- Pick a year, a class shape (Top heavy, Deep/balanced, Weak/flat, Bottom-loaded sleepers, Generational #1, Custom), and how many franchise stars, surprise stars, role players, busts, steals, and project bigs you want. Set 5–30 builds.
+- **Fill picks 1–N** (on by default): a class of N builds takes picks 1 through N, and fates are placed by position in the class (stars near the top, busts in the top half, surprise stars, steals and projects in the back half). Turn it off to spread builds across a 60-pick draft.
+- Each build gets a name, positions, size (wingspan capped at +6"), age, background, archetype, all 36 2K27 ratings, potential, Min/Max Potential, Bust/Boom %, peak ages, suggested badges with tiers, key tendencies, and appearance notes. Each build also has a hidden "true fate" behind a spoiler toggle.
+- Seeds make rolls reproducible. You can lock builds and re-roll one or all.
+- Card mode lists fields in Edit Player order with tap-to-check progress.
+- Saves multiple classes in the browser (localStorage), with JSON backup/import and CSV export.
+
+## Important
+- **House rules, not 2K's formula.** Target OVR/potential tiers, fate logic, badge tiers and tendencies are community-informed heuristics. 2K calculates the real overall. Badge requirements in the editor are unverified.
+- **All players are fictional.** Names are randomly combined, so check them against real players if that matters to you.
+- **Not affiliated with or endorsed by 2K, Take-Two, or the NBA.** NBA 2K is a trademark of its owners.
+- Data stays on your device; nothing is sent anywhere.

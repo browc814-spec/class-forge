@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0b14">
+<title>Class Forge 2K27: Fictional Draft Class Generator</title>
+<style>
+:root{--bg:#0d0b14;--panel:#17141f;--panel2:#211c2c;--line:#332b44;--txt:#f0ecf8;--mut:#9a90b0;--acc:#ff8a3d;--acc2:#ffd23f;--bad:#ff5d6c;--good:#39d98a;--blue:#6aa8ff;--r:14px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#0d0b14 80%,rgba(13,11,20,.88));padding:calc(10px + env(safe-area-inset-top)) 14px 8px;border-bottom:1px solid var(--line)}
+h1{font-size:20px;margin:0}h1 span{color:var(--acc)}
+.sub{color:var(--mut);font-size:12px}
+.row{display:flex;gap:8px;align-items:center}.grow{flex:1;min-width:0}
+select,input,textarea,button{font:inherit;color:var(--txt)}
+select,input[type=text],input[type=number],textarea{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:46px;width:100%;font-size:16px}
+textarea{min-height:100px;font-family:ui-monospace,Menlo,monospace}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:12px;min-height:48px;padding:10px 14px;font-weight:600;cursor:pointer}
+button.pri{background:var(--acc);color:#2a1100;border-color:var(--acc)}
+button.warn{background:transparent;color:var(--bad);border-color:var(--bad)}
+button.ghost{background:transparent}
+button:active{transform:scale(.98)}
+main{padding:12px 14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:10px 0}
+.sec{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin:14px 0 6px;font-weight:700}
+.info{font-size:13px;color:var(--mut)}
+.note{font-size:12px;color:var(--acc2);background:rgba(255,210,63,.07);border:1px solid rgba(255,210,63,.35);border-radius:10px;padding:8px 10px;margin:8px 0}
+label.f{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{min-height:44px;padding:6px 12px;border-radius:22px;font-size:14px}
+.chip.on{border-color:var(--acc);background:#3a1f0c;color:var(--acc)}
+.cnt{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.cnt .lb small{display:block;color:var(--mut);font-size:11px}
+.stp{display:flex;align-items:center;gap:6px}
+.stp button{min-width:44px;min-height:44px;padding:0;font-size:20px}
+.stp span{min-width:28px;text-align:center;font-weight:800;font-size:18px}
+input[type=range]{width:100%;accent-color:var(--acc);height:34px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);background:#120f1a;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs button{border:0;border-radius:0;background:transparent;min-height:64px;font-size:11px;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px}
+nav.tabs button b{font-size:20px}
+nav.tabs button.on{color:var(--acc)}
+.view{display:none}.view.on{display:block}
+.pros{display:flex;gap:10px;align-items:center}
+.pk{min-width:48px;height:52px;border-radius:12px;background:var(--panel2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+.pk small{font-size:9px;color:var(--mut);font-weight:600}
+.nm{font-weight:700}.meta{color:var(--mut);font-size:13px}
+.ic{display:flex;flex-direction:column;gap:6px}
+.ic button{min-height:40px;min-width:44px;padding:4px 8px}
+.ic button.on{border-color:var(--acc2);color:var(--acc2)}
+.fate{display:inline-block;font-size:12px;font-weight:800;padding:2px 8px;border-radius:8px;margin-left:4px;background:var(--panel2)}
+.f-star{background:#3a2f07;color:#ffd23f}.f-surprise{background:#2b1440;color:#e3a6ff}.f-role{background:#0f2a3a;color:#8fd3ff}
+.f-bust{background:#3a0f14;color:#ff7a86}.f-steal{background:#0b3a2a;color:#7fffc4}.f-project{background:#3a2a0b;color:#ffb36b}.f-prospect{background:#262133;color:#c8c0da}.f-hidden{background:#262133;color:#9a90b0}
+.tag{display:inline-block;font-size:11px;padding:2px 6px;border-radius:6px;background:var(--panel2);color:var(--mut);margin:2px 3px 0 0}
+.tb{display:inline-block;font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;margin:2px 3px 0 0;color:#111}
+.Bronze{background:#cd7f32}.Silver{background:#c0c7d2}.Gold{background:#ffd23f}.HallofFame,.HoF{background:#b48cff}
+.fld{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--line);margin:6px 0;cursor:pointer;user-select:none}
+.fld .bx{width:30px;height:30px;border-radius:8px;border:2px solid var(--mut);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-weight:900;color:#2a1100}
+.fld.ck{opacity:.5}.fld.ck .bx{background:var(--acc);border-color:var(--acc)}
+.fld .lb{flex:1;min-width:0}.fld .lb small{display:block;color:var(--mut);font-size:11px}
+.fld .vl{font-size:20px;font-weight:800;color:var(--acc);text-align:right;max-width:55%;overflow-wrap:anywhere}
+.prog{height:10px;border-radius:6px;background:var(--panel2);overflow:hidden;margin:8px 0}
+.prog i{display:block;height:100%;background:var(--acc);width:0}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--acc);color:#2a1100;padding:10px 16px;border-radius:12px;font-weight:700;z-index:99;display:none;max-width:90vw;text-align:center}
+.empty{color:var(--mut);text-align:center;padding:24px 8px}
+.sum{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+ol.how li{margin:6px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="row"><div class="grow"><h1>Class <span>Forge</span> 2K27</h1><div class="sub">Fictional draft class generator for MyNBA user-created classes</div></div></div>
+  <div class="row" style="margin-top:8px">
+    <select id="classSel" class="grow" aria-label="Saved classes"></select>
+    <button id="newClassBtn" style="min-width:90px">+ New</button>
+  </div>
+</header>
+
+<main>
+<!-- SETUP -->
+<section id="v-setup" class="view on">
+  <div class="card">
+    <div class="grid2">
+      <div><label class="f">Draft year</label><input type="number" inputmode="numeric" id="s_year"></div>
+      <div><label class="f">Seed (same seed = same class)</label><div class="row"><input type="text" id="s_seed" class="grow" autocomplete="off"><button id="newSeed" style="min-width:48px;padding:0" aria-label="New seed">🎲</button></div></div>
+    </div>
+    <label class="f">Class shape</label>
+    <div class="chips" id="s_shape"></div>
+    <div id="s_custom" style="display:none">
+      <label class="f">Top of draft strength (picks 1–10): <b id="s_topv"></b></label><input type="range" id="s_top" min="-3" max="3" step="1">
+      <label class="f">Depth strength (picks 11+): <b id="s_depv"></b></label><input type="range" id="s_dep" min="-3" max="3" step="1">
+    </div>
+    <div class="info" id="s_shapeInfo" style="margin-top:6px"></div>
+  </div>
+  <div class="card">
+    <div class="row"><div class="grow"><b>Builds &amp; true fates</b></div></div>
+    <div id="s_counts"></div>
+    <div class="info" id="s_fill" style="margin-top:6px"></div>
+    <label class="cnt" style="cursor:pointer;border-bottom:0"><div class="lb"><b>Fill picks 1–N</b><small>ON: a class of N builds takes picks 1 to N, with fates placed by position in the class. OFF: builds spread across a 60-pick draft (2K's generated rookies fill the gaps).</small></div><input type="checkbox" id="s_fillPicks" style="width:28px;height:28px;accent-color:var(--acc)"></label>
+  </div>
+  <div class="card">
+    <div class="sec" style="margin-top:0">Optional mix</div>
+    <label class="f">Position mix weight: Guards <b id="s_gv"></b></label><input type="range" id="s_g" min="0" max="100" step="5">
+    <label class="f">Wings <b id="s_wv"></b></label><input type="range" id="s_w" min="0" max="100" step="5">
+    <label class="f">Bigs <b id="s_bv"></b></label><input type="range" id="s_b" min="0" max="100" step="5">
+    <label class="f">International share: <b id="s_iv"></b>%</label><input type="range" id="s_i" min="0" max="60" step="5">
+    <label class="f">Older prospects (seniors, 22–23): <b id="s_ov"></b>%</label><input type="range" id="s_o" min="0" max="60" step="5">
+  </div>
+  <button class="pri" id="forgeBtn" style="width:100%">⚒️ Forge class</button>
+  <div class="grid2" style="margin-top:8px">
+    <button id="rerollAll">🎲 Re-roll all (new seed)</button>
+    <button id="toBoard">View board →</button>
+  </div>
+  <div class="note">All numbers are house rules, not 2K's formula. 2K calculates the real overall; these are targets. Locked prospects (🔒) are kept when you forge or re-roll.</div>
+</section>
+
+<!-- BOARD -->
+<section id="v-board" class="view">
+  <div class="row"><div class="grow"><b id="bTitle"></b><div class="info" id="bSub"></div></div><button id="spoilBtn" style="min-width:110px"></button></div>
+  <div class="sum" id="bSum"></div>
+  <div id="bList"></div>
+</section>
+
+<!-- CARD -->
+<section id="v-card" class="view">
+  <div class="note">Field order is a <b>best guess</b> at the Edit Player screen (vitals → ratings → potential → badges → tendencies → appearance). Confirm it against your PS5 screen; the order is set by <code>CARD_ORDER</code> at the top of the script.</div>
+  <select id="cardSel" aria-label="Prospect"></select>
+  <div id="cardBody"></div>
+</section>
+
+<!-- DATA -->
+<section id="v-data" class="view">
+  <div class="card">
+    <div class="sec" style="margin-top:0">Backup &amp; export</div>
+    <div class="info">Classes save automatically on this phone. Back up now and then, because clearing browser data wipes them.</div>
+    <div class="grid2" style="margin-top:10px">
+      <button id="expJson">⬇ JSON backup</button>
+      <button id="copyJson">📋 Copy JSON</button>
+      <button id="expCsv">⬇ CSV (this class)</button>
+      <button id="impFileBtn">⬆ Import file</button>
+    </div>
+    <input type="file" id="impFile" accept=".json,application/json" style="display:none">
+    <label class="f">Or paste a JSON backup</label>
+    <textarea id="impText" placeholder='{"app":"class-forge",...}'></textarea>
+    <button id="impPaste" style="width:100%;margin-top:8px">Import pasted JSON</button>
+    <button class="warn" id="delClass" style="width:100%;margin-top:14px">Delete this class</button>
+  </div>
+</section>
+
+<!-- HOW TO -->
+<section id="v-how" class="view">
+  <div class="card">
+    <div class="sec" style="margin-top:0">Workflow (PS5, NBA 2K27)</div>
+    <ol class="how">
+      <li>Forge a class here, then open <b>Board</b> to see the big board.</li>
+      <li>In 2K: <b>Features → Roster → Create a Draft Class → Create New Draft Class</b>. This starts you with generated rookies; you <b>overwrite</b> them, because you can't create prospects from scratch.</li>
+      <li>L2/R2 moves between prospects and L1/R1 filters by position. <b>L3 = Quick Edit</b> (position, age, height, weight). Select a player → <b>Edit Player</b> for ratings, potential, badges, tendencies, and appearance.</li>
+      <li>Open <b>Card</b> mode here and tap each field as you set it, then tap <b>Next player</b>.</li>
+      <li>Press <b>Options</b> to save as a new file (name + description) or update the existing one.</li>
+      <li>In a MyNBA save: <b>Scouting → Prospect Scouting → select any prospect → Load/Download Draft Class</b>, then pick your file.</li>
+    </ol>
+    <div class="info">Sources: a 2K26 draft-class guide (Magic Game World) and the 2K26 MyNBA load path (Yahoo/Yardbarker). I'm assuming 2K27 uses the same menus ⚠️ (not yet verified on 2K27).</div>
+  </div>
+  <div class="card">
+    <div class="sec" style="margin-top:0">⚠️ Notes &amp; limits</div>
+    <ul class="info" style="padding-left:18px">
+      <li><b>Wingspan:</b> a 2K27 class maker reports Create-a-Player can't show wingspans above about <b>+6"</b>. Builds here are capped at +6 ⚠️.</li>
+      <li><b>Potential fields</b> (Min/Max Potential, Bust %, Boom %, Peak Start/End) are in the vitals area, per 2K27 class makers ⚠️. Exact labels may differ.</li>
+      <li><b>Badges</b> come from the 2K27 list of 53 (community-verified). Tier picks use house-rule thresholds; whether the editor enforces badge requirements is <b>unverified</b>.</li>
+      <li><b>Tendency names</b> are approximate. Edit tendencies before attributes, and keep "Dish to open man" at 20 or higher for non-PGs (community guide).</li>
+      <li>If downloading a class through the Features menu gives a generic class, load it through MyNBA Prospect Scouting instead ⚠️.</li>
+      <li>All players are fictional. Names are generated, so check them against real players if that matters to you.</li>
+    </ul>
+    <div class="info">Not affiliated with or endorsed by 2K or the NBA. Data stays on your phone.</div>
+  </div>
+</section>
+</main>
+
+<nav class="tabs">
+  <button data-v="setup" class="on"><b>⚒️</b>Setup</button>
+  <button data-v="board"><b>📋</b>Board</button>
+  <button data-v="card"><b>✅</b>Card</button>
+  <button data-v="data"><b>💾</b>Data</button>
+  <button data-v="how"><b>❔</b>How to</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== CONFIG (edit me) ===================== */
+// 2K27 ratings (names from 2KRatings' 2K27 attribute definitions). Grouping/order = best guess at the editor tabs.
+const RATING_GROUPS = [
+  ["Outside Scoring",[["CLOSE","Close Shot"],["MID","Mid-Range Shot"],["3PT","Three-Point Shot"],["FT","Free Throw"],["SHOTIQ","Shot IQ"],["OCNST","Offensive Consistency"]]],
+  ["Inside Scoring",[["LAYUP","Layup"],["STDUNK","Standing Dunk"],["DUNK","Driving Dunk"],["PHOOK","Post Hook"],["PFADE","Post Fade"],["POSTC","Post Control"],["FOUL","Draw Foul"],["HANDS","Hands"]]],
+  ["Playmaking",[["PASS","Pass Accuracy"],["BALL","Ball Handle"],["SPDB","Speed with Ball"],["PASSIQ","Pass IQ"],["VISION","Pass Vision"]]],
+  ["Defense",[["ID","Interior Defense"],["PD","Perimeter Defense"],["STEAL","Steal"],["BLOCK","Block"],["HELPDIQ","Help Defense IQ"],["PSPER","Pass Perception"],["DCNST","Defensive Consistency"]]],
+  ["Rebounding",[["OREB","Offensive Rebound"],["DREB","Defensive Rebound"]]],
+  ["Athleticism",[["SPEED","Speed"],["AGIL","Agility"],["STR","Strength"],["VERT","Vertical"],["STAM","Stamina"],["HSTL","Hustle"],["DUR","Overall Durability"]]],
+  ["Intangibles",[["INTNGBL","Intangibles"]]]
+];
+const RNAME = Object.fromEntries(RATING_GROUPS.flatMap(g=>g[1]));
+const ATHLETIC_KEYS = ["SPEED","AGIL","VERT","STR","DUNK","STDUNK"];
+const MENTAL_KEYS = ["SHOTIQ","OCNST","PASSIQ","HELPDIQ","DCNST","INTNGBL"];
+
+// Edit Player field order for Card mode. ⚠️ best guess, reorder freely.
+const CARD_ORDER = ["@vitals","@ratings","@potential","@badges","@tendencies","@appearance"];
+const VITALS_ORDER = ["first","last","pos","pos2","height","weight","wing","age","school","country"];
+const POTENTIAL_ORDER = ["pot","minPot","maxPot","bust","boom","peakStart","peakEnd"];
+
+// 2K27 badges (LockerCodes list, verified vs Aug 22 2026 build): [name, category, minHeightIn, maxHeightIn, drivingRatings]
+// Driving ratings & tier thresholds below are HOUSE RULES (real per-badge thresholds not used; editor enforcement unverified).
+const BADGES = [
+ ["Aerial Wizard","Finishing",69,88,["DUNK","STDUNK"]],["Float Game","Finishing",69,88,["CLOSE"]],["Ghost Stepper","Finishing",69,88,["LAYUP"]],
+ ["Hook Specialist","Finishing",69,88,["PHOOK"]],["Layup Mixmaster","Finishing",69,84,["LAYUP"]],["Paint Prodigy","Finishing",75,88,["CLOSE"]],
+ ["Physical Finisher","Finishing",69,88,["LAYUP","STR"]],["Post Powerhouse","Finishing",77,88,["POSTC","STR"]],["Post Spin Catalyst","Finishing",73,88,["POSTC"]],
+ ["Posterizer","Finishing",69,88,["DUNK","VERT"]],["Rise Up","Finishing",77,88,["STDUNK"]],
+ ["Arc Cadence","Shooting",69,83,["3PT"]],["Deadeye","Shooting",69,88,["3PT","MID"]],["Limitless Range","Shooting",69,88,["3PT"]],
+ ["Mini Marksman","Shooting",69,76,["3PT","MID"]],["Post Fade Phenom","Shooting",69,88,["PFADE","POSTC"]],["Quick Trigger","Shooting",69,88,["MID","3PT"]],
+ ["Set and Fire","Shooting",69,88,["3PT"]],["Smooth Operator","Shooting",69,83,["MID"]],["Static Middy","Shooting",69,88,["MID"]],
+ ["Ankle Assassin","Playmaking",69,82,["BALL"]],["Bail Out","Playmaking",69,88,["PASS"]],["Break Starter","Playmaking",69,88,["PASS"]],
+ ["Dimer","Playmaking",69,88,["PASS","VISION"]],["Handles For Days","Playmaking",69,84,["BALL"]],["Lightning Launch","Playmaking",69,83,["SPDB"]],
+ ["Pace","Playmaking",69,82,["SPDB"]],["Strong Handle","Playmaking",69,83,["BALL"]],["Unpluckable","Playmaking",69,88,["BALL"]],
+ ["Versatile Visionary","Playmaking",69,88,["VISION","PASSIQ"]],
+ ["Ankle Braces","Defense",69,81,["PD"]],["Challenger","Defense",69,83,["PD"]],["Glove","Defense",69,84,["STEAL"]],
+ ["High-Flying Denier","Defense",75,88,["BLOCK","VERT"]],["Immovable Enforcer","Defense",69,88,["PD","STR"]],["Interceptor","Defense",69,88,["PSPER","STEAL"]],
+ ["Off-Ball Pest","Defense",69,88,["PD"]],["Paint Patroller","Defense",77,88,["BLOCK"]],["Pick Dodger","Defense",69,82,["PD","AGIL"]],
+ ["Post Lockdown","Defense",77,88,["ID"]],["Seatbelt","Defense",69,81,["PD","STR"]],["Wall Up","Defense",77,88,["ID"]],
+ ["Boxout Boss","Rebounding",75,88,["DREB","STR"]],["Breaker","Rebounding",75,88,["OREB"]],["Crasher","Rebounding",69,88,["OREB"]],
+ ["Possession Closer","Rebounding",69,88,["DREB"]],["Sync Snatcher","Rebounding",69,88,["VERT","OREB"]],
+ ["Brick Wall","Physicals",77,88,["STR"]],["Bruiser","Physicals",69,88,["STR"]],["Flash","Physicals",69,88,["SPEED"]],
+ ["Pogo Stick","Physicals",69,88,["VERT"]],["Slippery Off-Ball","Physicals",69,81,["SPEED","AGIL"]],["Work Horse","Physicals",69,88,["HSTL"]]
+];
+// Rookie badge tiers (house rule; skews Bronze/Silver like community classes)
+const BADGE_TIERS = [["Hall of Fame",95],["Gold",88],["Silver",80],["Bronze",72]]; // Hall of Fame only for a Generational #1
+
+// Archetypes: positions, size, rating profile (-3..+3, unlisted = 0), badge pool, tendencies, style
+const ARCHETYPES = {
+ "Shot Creator":{grp:"G",pos:["PG","SG"],pos2:["SG","PG","SF"],h:[73,78],w:[180,205],ws:[0,5],dev:5,peak:"skill",
+  prof:{MID:3,"3PT":2,FT:2,SHOTIQ:1,OCNST:1,LAYUP:2,BALL:3,SPDB:2,SPEED:1,AGIL:2,CLOSE:1,FOUL:1,STDUNK:-3,PHOOK:-3,POSTC:-2,ID:-3,BLOCK:-3,OREB:-3,DREB:-2,STR:-2,PD:-1},
+  badges:["Ankle Assassin","Strong Handle","Lightning Launch","Smooth Operator","Quick Trigger","Arc Cadence","Deadeye","Layup Mixmaster","Float Game","Unpluckable","Mini Marksman","Pace"],
+  tend:{"Shot":75,"Touches":75,"Shot Three":55,"Drive":65,"Post Up":5,"Dish to Open Man":55,"Foul":35,"On-Ball Steal":40},
+  style:["Quick, compact jumper with a high release","Herky-jerky handle, loves step-backs"]},
+ "Floor General":{grp:"G",pos:["PG"],pos2:["SG"],h:[72,77],w:[175,200],ws:[0,5],dev:5,peak:"skill",
+  prof:{PASS:3,VISION:3,PASSIQ:3,BALL:2,SPDB:2,"3PT":1,MID:1,LAYUP:1,FT:1,SPEED:2,AGIL:2,STEAL:1,SHOTIQ:1,STDUNK:-3,PHOOK:-3,POSTC:-3,ID:-3,BLOCK:-3,OREB:-3,DREB:-2,STR:-2},
+  badges:["Dimer","Versatile Visionary","Bail Out","Break Starter","Handles For Days","Strong Handle","Ankle Assassin","Pace","Set and Fire","Glove","Interceptor"],
+  tend:{"Shot":45,"Touches":80,"Shot Three":45,"Drive":55,"Post Up":3,"Dish to Open Man":90,"Foul":30,"On-Ball Steal":50},
+  style:["Pass-first; set shot with a low release","Calm pace, always looking ahead in transition"]},
+ "3&D Wing":{grp:"W",pos:["SG","SF"],pos2:["SF","SG","PF"],h:[77,81],w:[195,220],ws:[2,6],dev:4,peak:"skill",
+  prof:{"3PT":3,PD:3,STEAL:1,HELPDIQ:1,PSPER:1,DCNST:1,FT:1,AGIL:1,SPEED:1,BALL:-1,PASS:-1,VISION:-1,POSTC:-2,PHOOK:-3,STDUNK:-1,ID:-1,BLOCK:-1},
+  badges:["Set and Fire","Deadeye","Limitless Range","Challenger","Off-Ball Pest","Pick Dodger","Glove","Interceptor","Ankle Braces","Slippery Off-Ball"],
+  tend:{"Shot":50,"Touches":40,"Shot Three":80,"Drive":30,"Post Up":5,"Dish to Open Man":45,"Foul":40,"On-Ball Steal":45},
+  style:["Catch-and-shoot, clean set-point","Long arms; guards the other team's best wing"]},
+ "Slashing Wing":{grp:"W",pos:["SG","SF"],pos2:["SF","SG"],h:[76,80],w:[195,215],ws:[2,6],dev:4,peak:"athletic",
+  prof:{LAYUP:3,DUNK:3,FOUL:2,SPEED:2,AGIL:2,VERT:3,BALL:1,SPDB:1,CLOSE:1,"3PT":-2,MID:-1,FT:-1,PHOOK:-3,POSTC:-2},
+  badges:["Posterizer","Rise Up","Aerial Wizard","Physical Finisher","Layup Mixmaster","Ghost Stepper","Lightning Launch","Flash","Float Game","Slippery Off-Ball"],
+  tend:{"Shot":60,"Touches":55,"Shot Three":25,"Drive":85,"Post Up":8,"Dish to Open Man":40,"Foul":40,"On-Ball Steal":45},
+  style:["Explosive first step, lives at the rim","Jumper is a work in progress (flat, slow release)"]},
+ "Point Forward":{grp:"W",pos:["SF","PF"],pos2:["PF","SF","PG"],h:[79,82],w:[215,235],ws:[2,6],dev:4,peak:"skill",
+  prof:{PASS:2,VISION:2,PASSIQ:2,BALL:1,LAYUP:1,MID:1,DREB:1,STR:1,HELPDIQ:1,SHOTIQ:1,PHOOK:-1},
+  badges:["Versatile Visionary","Dimer","Bail Out","Break Starter","Physical Finisher","Static Middy","Possession Closer","Immovable Enforcer","Strong Handle"],
+  tend:{"Shot":55,"Touches":70,"Shot Three":40,"Drive":60,"Post Up":25,"Dish to Open Man":75,"Foul":40,"On-Ball Steal":40},
+  style:["Grab-and-go after defensive boards","Big frame, sees over the defense"]},
+ "Two-Way Wing":{grp:"W",pos:["SF","SG"],pos2:["SG","SF","PF"],h:[78,81],w:[205,225],ws:[2,6],dev:4,peak:"athletic",
+  prof:{"3PT":1,MID:1,LAYUP:1,PD:2,STEAL:1,HELPDIQ:1,DCNST:1,SPEED:1,AGIL:1,STR:1,VERT:1,PHOOK:-2,POSTC:-1},
+  badges:["Challenger","Glove","Off-Ball Pest","Set and Fire","Physical Finisher","Interceptor","Seatbelt","Pick Dodger","Slippery Off-Ball","Work Horse"],
+  tend:{"Shot":60,"Touches":55,"Shot Three":55,"Drive":55,"Post Up":10,"Dish to Open Man":50,"Foul":40,"On-Ball Steal":50},
+  style:["Smooth mid-range pull-up","Switchable defender, plays through contact"]},
+ "Defensive Stopper":{grp:"W",pos:["SG","SF","PF"],pos2:["SF","PF","SG"],h:[76,80],w:[200,225],ws:[3,6],dev:4,peak:"athletic",
+  prof:{PD:3,STEAL:2,PSPER:2,HELPDIQ:2,DCNST:2,ID:1,HSTL:2,AGIL:2,STR:1,"3PT":-1,MID:-1,BALL:-1,PASS:-1,VISION:-1,SHOTIQ:-1,PHOOK:-3,PFADE:-2,POSTC:-2},
+  badges:["Challenger","Glove","Interceptor","Off-Ball Pest","Pick Dodger","Seatbelt","Ankle Braces","Immovable Enforcer","Work Horse","Bruiser"],
+  tend:{"Shot":35,"Touches":30,"Shot Three":45,"Drive":35,"Post Up":5,"Dish to Open Man":40,"Foul":50,"On-Ball Steal":65},
+  style:["Relentless on-ball pest, low stance","Corner-three only on offense"]},
+ "Sharpshooter":{grp:"G",pos:["SG","PG"],pos2:["PG","SG","SF"],h:[74,78],w:[180,205],ws:[0,4],dev:4,peak:"skill",
+  prof:{"3PT":3,MID:2,FT:3,OCNST:1,SHOTIQ:1,LAYUP:-1,DUNK:-2,STDUNK:-3,PD:-2,STR:-3,ID:-3,BLOCK:-3,OREB:-3,DREB:-2,VERT:-1,PHOOK:-3,POSTC:-3},
+  badges:["Deadeye","Limitless Range","Set and Fire","Arc Cadence","Quick Trigger","Static Middy","Mini Marksman","Slippery Off-Ball","Bail Out"],
+  tend:{"Shot":70,"Touches":45,"Shot Three":90,"Drive":25,"Post Up":3,"Dish to Open Man":45,"Foul":30,"On-Ball Steal":35},
+  style:["Lightning release, deep range","Runs off screens constantly"]},
+ "Stretch Four":{grp:"B",pos:["PF","C"],pos2:["C","PF","SF"],h:[81,84],w:[225,245],ws:[1,5],dev:4,peak:"skill",
+  prof:{"3PT":3,MID:2,FT:1,DREB:1,CLOSE:1,PFADE:1,BALL:-2,PASS:-1,SPEED:-1,AGIL:-2,PD:-2,STEAL:-2,LAYUP:-1},
+  badges:["Set and Fire","Deadeye","Limitless Range","Static Middy","Post Fade Phenom","Possession Closer","Boxout Boss","Brick Wall","Quick Trigger"],
+  tend:{"Shot":60,"Touches":45,"Shot Three":75,"Drive":25,"Post Up":15,"Dish to Open Man":35,"Foul":40,"Roll vs Pop":20,"Block Shot":35},
+  style:["Pick-and-pop big with a high release","Slight frame; needs strength"]},
+ "Rim-Running Big":{grp:"B",pos:["C","PF"],pos2:["PF","C"],h:[82,86],w:[235,260],ws:[3,6],dev:5,peak:"athletic",
+  prof:{STDUNK:3,DUNK:2,CLOSE:2,VERT:2,OREB:2,DREB:2,BLOCK:2,ID:1,HANDS:1,STR:1,HSTL:1,"3PT":-3,MID:-2,FT:-2,BALL:-3,PASS:-2,VISION:-2,PFADE:-2,POSTC:-1,PD:-2,SPDB:-3,AGIL:-1,STEAL:-2},
+  badges:["Rise Up","Posterizer","Aerial Wizard","Paint Patroller","High-Flying Denier","Crasher","Possession Closer","Sync Snatcher","Pogo Stick","Brick Wall","Wall Up","Boxout Boss"],
+  tend:{"Shot":40,"Touches":30,"Shot Three":2,"Drive":15,"Post Up":15,"Dish to Open Man":25,"Foul":50,"Roll vs Pop":95,"Block Shot":70},
+  style:["Lob threat, rolls hard to the rim","Free throws are shaky"]},
+ "Post Scorer Big":{grp:"B",pos:["C","PF"],pos2:["PF","C"],h:[81,85],w:[240,265],ws:[2,6],dev:5,peak:"skill",
+  prof:{POSTC:3,PHOOK:3,PFADE:2,CLOSE:3,STR:2,STDUNK:1,HANDS:1,DREB:1,OREB:1,ID:1,"3PT":-2,BALL:-2,SPEED:-2,AGIL:-2,PD:-2,VERT:-1,SPDB:-3},
+  badges:["Post Powerhouse","Hook Specialist","Post Spin Catalyst","Post Fade Phenom","Paint Prodigy","Physical Finisher","Boxout Boss","Brick Wall","Post Lockdown","Bruiser"],
+  tend:{"Shot":60,"Touches":60,"Shot Three":5,"Drive":15,"Post Up":80,"Dish to Open Man":35,"Foul":45,"Roll vs Pop":70,"Block Shot":45},
+  style:["Old-school footwork, soft hook","Wide body, seals deep"]},
+ "Raw Project Big":{grp:"B",pos:["C"],pos2:["PF"],h:[83,87],w:[225,255],ws:[3,6],dev:5,peak:"athletic",
+  prof:{BLOCK:2,VERT:3,STDUNK:2,OREB:1,DREB:1,ID:1,STR:-1,HANDS:-1,SHOTIQ:-2,OCNST:-2,PASSIQ:-2,PASS:-2,VISION:-3,BALL:-3,"3PT":-2,MID:-2,FT:-3,POSTC:-2,PHOOK:-1,PFADE:-2,HELPDIQ:-1,DCNST:-2},
+  badges:["Paint Patroller","High-Flying Denier","Pogo Stick","Sync Snatcher","Rise Up","Crasher","Wall Up","Work Horse"],
+  tend:{"Shot":25,"Touches":20,"Shot Three":2,"Drive":10,"Post Up":15,"Dish to Open Man":20,"Foul":60,"Roll vs Pop":95,"Block Shot":80},
+  style:["Rail-thin, enormous reach","Raw hands; elite second jump"]}
+};
+
+// Tiers by projected pick (HOUSE RULES built from community benchmarks: few 84+ potentials, late 1st about 72 OVR, 2nd round 62–72)
+const GEN_TIER = {label:"Generational #1",ovr:[78,82],pot:[94,98]};
+const TIERS = [
+ {max:5,label:"Top 5",ovr:[73,78],pot:[86,93]},
+ {max:14,label:"Lottery",ovr:[70,75],pot:[81,87]},
+ {max:22,label:"Mid 1st",ovr:[67,72],pot:[77,83]},
+ {max:30,label:"Late 1st",ovr:[66,70],pot:[74,80]},
+ {max:45,label:"Early 2nd",ovr:[62,68],pot:[70,77]},
+ {max:60,label:"Late 2nd",ovr:[58,65],pot:[66,73]},
+ {max:999,label:"Undrafted",ovr:[55,62],pot:[62,70]}
+];
+const FATES = {
+ star:{icon:"⭐",label:"Star",cls:"f-star",count:"Franchise / lottery stars",help:"Projected top 5–6; lives up to it"},
+ surprise:{icon:"🌟",label:"Surprise Star",cls:"f-surprise",count:"Surprise stars",help:"Mid/late projection, huge Max Pot + Boom %"},
+ role:{icon:"🧩",label:"Role Player",cls:"f-role",count:"Solid role players",help:"Narrow potential band, 1–2 strong skills"},
+ bust:{icon:"💥",label:"Bust",cls:"f-bust",count:"Big busts",help:"High projection, looks great athletically, low Min Pot"},
+ steal:{icon:"💎",label:"Steal",cls:"f-steal",count:"Steals / sleepers",help:"Late pick, underrated ratings"},
+ project:{icon:"🏗️",label:"Project",cls:"f-project",count:"Project / raw bigs",help:"Raw big, wide boom-or-bust range"},
+ prospect:{icon:"▫️",label:"Solid Prospect",cls:"f-prospect",count:"",help:"Auto-filled neutral prospects"}
+};
+const FATE_ORDER = ["star","surprise","role","bust","steal","project"];
+const SHAPES = {
+ top:{label:"Top heavy",info:"Top 3 picks get +2 OVR / +3 POT; everyone after pick 10 gets −1/−1."},
+ deep:{label:"Deep / balanced",info:"Picks 11–45 get +1 OVR / +2 POT; the top stays normal."},
+ weak:{label:"Weak / flat",info:"Everyone gets −2 OVR / −3 POT."},
+ bottom:{label:"Bottom-loaded sleepers",info:"Top 10 get −1/−1; picks 31+ get +2/+2; steals and surprise stars slide later."},
+ gen:{label:"Generational #1",info:"One prospect goes #1 with OVR 78–82 / POT 94–98; everyone else is normal."},
+ custom:{label:"Custom",info:"Set the top-10 and depth (11+) strength yourself, −3 to +3 each."}
+};
+// Pick ranges by fate (shape-adjusted below)
+// "Fill picks 1–N" mode: fate bands as a fraction of class size (0 = #1, 1 = last pick). House rules.
+const FILL_BAND = {star:[0,.22],bust:[.05,.5],role:[.25,.9],prospect:[.15,.85],surprise:[.5,1],steal:[.55,1],project:[.5,1]};
+const PICK_RANGE = {star:[1,6],surprise:[15,45],role:[10,45],bust:[2,12],steal:[25,58],project:[15,50],prospect:[4,40]};
+
+// Names (fictional combos)
+const US_FIRST=["Jaylen","Marcus","DeShawn","Tyrell","Caden","Isaiah","Malik","Jordan","Elijah","Kendrick","Darius","Quentin","Trey","Amari","Bryce","Cameron","Josiah","Devin","Xavier","Terrance","Micah","Jalen","Damari","Keon","Landon","Tobias","Rashad","Kobe","Colin","Ethan","Nate","Dorian","Zion","Andre","Brandon","Kyrie","Mason","Corey","Reggie","Silas","Omari","Jabari","Tavion","Grayson","Rowan","Ezra","Kian","Luka","Dante","Brooks"];
+const US_LAST=["Whitfield","Okafor","Bennett","Holloway","Mercer","Strickland","Dawson","Fairley","Kingsley","Rutledge","Ashby","Calloway","Pruitt","Merriweather","Langston","Hairston","Sutton","Bridgeman","Yarbrough","Coleman","Battle","Hollins","Pettaway","McCrae","Tillman","Gaines","Ridley","Sanders","Booker","Vaughn","Wofford","Abernathy","Stallworth","Truesdale","Garrison","Prescott","Lockett","Ivey","Rhodes","Haywood","Bledsoe","Carrington","Dixon","Everett","Fontenot","Greer","Hollister","Jeffries","Kirkland","Landry"];
+const INTL = [
+ ["Serbia",["Stefan","Marko","Aleksa","Vuk","Filip","Nemanja","Dusan","Lazar"],["Radanovic","Stojkov","Milicev","Lazarevic","Vukotic","Jankov","Dragisic","Peric"]],
+ ["France",["Theo","Mathis","Enzo","Killian","Noah","Yanis","Moussa","Hugo"],["Lefebvre","Diarra","Moreau","Traore","Garnier","Kone","Rousseau","Bamba"]],
+ ["Spain",["Pablo","Hugo","Alvaro","Mario","Izan","Sergio","Dani","Marc"],["Garrido","Navarro","Iglesias","Prieto","Vidal","Sanz","Ortega","Fuster"]],
+ ["Lithuania",["Rokas","Matas","Lukas","Deividas","Tadas","Mantas","Ignas","Arnas"],["Kazlauskas","Butkus","Zukauskas","Jankunas","Petrauskas","Vaitkus","Rimkus","Stankevicius"]],
+ ["Australia",["Lachlan","Jack","Cooper","Riley","Harrison","Kai","Mitchell","Tom"],["McAllister","Brennan","Walsh","Hargreaves","Doyle","Fitzgerald","Pearce","Gallagher"]],
+ ["Nigeria",["Chinedu","Emeka","Tobi","Ifeanyi","Segun","Olu","Kelechi","Uche"],["Adeyemi","Okonkwo","Eze","Balogun","Nwosu","Oladipo","Chukwu","Afolabi"]],
+ ["Senegal",["Mamadou","Ousmane","Cheikh","Abdou","Babacar","Ibrahima","Modou","Pape"],["Ndiaye","Sarr","Diop","Faye","Gueye","Sow","Cisse","Thiam"]],
+ ["Germany",["Jonas","Lukas","Moritz","Finn","Niklas","Paul","Leon","Felix"],["Hoffmann","Krause","Becker","Wagner","Schreiber","Vogel","Hartmann","Lindner"]],
+ ["Brazil",["Gabriel","Lucas","Rafael","Thiago","Bruno","Caio","Mateus","Vitor"],["Oliveira","Santos","Ferreira","Barbosa","Ribeiro","Carvalho","Moura","Teixeira"]],
+ ["Canada",["Owen","Liam","Andrew","Ethan","Dylan","Ryan","Kyle","Tristan"],["Lachance","Boucher","MacLeod","Tremblay","Gauthier","Henry","Campbell","Pelletier"]],
+ ["Greece",["Giorgos","Nikos","Kostas","Dimitris","Yannis","Vasilis","Panos","Thanos"],["Papadakis","Kouris","Mavridis","Lekkas","Stavrou","Dimou","Karras","Zervas"]],
+ ["Latvia",["Rihards","Kristaps","Arturs","Davis","Janis","Roberts","Martins","Toms"],["Berzins","Ozols","Kalnins","Liepins","Zarins","Krumins","Vitols","Strods"]],
+ ["Turkey",["Emir","Arda","Kerem","Baris","Mert","Can","Efe","Yigit"],["Yildiz","Aksoy","Kaya","Ozturk","Celik","Sahin","Demir","Aydin"]],
+ ["Cameroon",["Joel","Pascal","Christian","Yannick","Herve","Franck","Serge","Brice"],["Mbarga","Ekambi","Ngono","Fotso","Kamga","Tchami","Essomba","Biyik"]],
+ ["Argentina",["Facundo","Nicolas","Tomas","Agustin","Santiago","Joaquin","Bautista","Franco"],["Gimenez","Delfino","Paredes","Acosta","Bustos","Romero","Ledesma","Sosa"]],
+ ["Japan",["Haruto","Yuto","Sota","Kaito","Ren","Riku","Takumi","Daiki"],["Takahashi","Nakamura","Watanabe","Kobayashi","Yamamoto","Sato","Inoue","Kimura"]]
+];
+const COLLEGES=["Harbor State","Pine Valley","Redrock Tech","Lakeshore University","Granite Falls State","Bayou A&M","Summit Christian","Iron Range","Mesa Grande","Cedar Point University","Tri-Rivers","Blue Mesa State","Coastal Carolina Tech","North Fork","Prairie View Tech","Silver Lake","Emerald Bay","Hollow Creek","Union Hill","Westbrook College","Gulf Coast State","Highland Tech","Kestrel University","Stonebridge"];
+const HAIR=["short fade","high-top","braids","twists","buzz cut","locs","man bun","clean shave","curly top","shoulder-length hair"];
+const LOOK=["arm sleeve","headband","no accessories","knee sleeve","finger tape","goggles","wristbands","ankle braces"];
+const BUILD={G:["slim","wiry","compact"],W:["lanky","athletic","long-limbed"],B:["broad","long and thin","thick lower body"]};
+/* =========================================================== */
+
+const KEY="classForge.v1";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const uid=()=>Math.random().toString(36).slice(2,9);
+function hashStr(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19;}h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return (h^=h>>>16)>>>0;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const rngFor=(...p)=>mulberry32(hashStr(p.join("|")));
+const ri=(r,a,b)=>a+Math.floor(r()*(b-a+1));
+const pickOne=(r,arr)=>arr[Math.floor(r()*arr.length)];
+const randSeed=()=>{const w=["blaze","comet","drift","ember","frost","glide","halo","ion","jolt","karma","lumen","mojo","nova","orbit","pulse","quake","rift","surge","tide","volt"];return w[Math.floor(Math.random()*w.length)]+"-"+Math.floor(Math.random()*9000+1000);};
+const ftIn=i=>`${Math.floor(i/12)}'${i%12}"`;
+const letter=p=>p>=95?"A+":p>=90?"A":p>=85?"A-":p>=80?"B+":p>=75?"B":p>=70?"B-":p>=65?"C+":p>=60?"C":"C-";
+
+function defaultSettings(){return {year:new Date().getFullYear()+2,shape:"top",top:0,dep:0,counts:{star:2,surprise:1,role:5,bust:3,steal:1,project:0},total:12,fill:true,mix:{G:50,W:50,B:50},intl:20,older:15};}
+function newClass(settings){const st=settings||defaultSettings();return {id:uid(),settings:st,seed:randSeed(),prospects:[],checks:{},created:Date.now()};}
+function defaultState(){const c=newClass();return {app:"class-forge",version:2,current:c.id,showFates:false,classes:{[c.id]:c}};}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))||defaultState();}catch(e){S=defaultState();}
+function normalize(){
+  if(S&&S.app==="class-forge")S.version=2; // v2 adds settings.fill (defaults ON); saved prospects/picks untouched
+  if(!S.classes||!Object.keys(S.classes).length)S=defaultState();
+  Object.values(S.classes).forEach(c=>{c.settings=Object.assign(defaultSettings(),c.settings||{});c.settings.counts=Object.assign(defaultSettings().counts,c.settings.counts||{});c.settings.mix=Object.assign({G:50,W:50,B:50},c.settings.mix||{});c.prospects=c.prospects||[];c.checks=c.checks||{};c.seed=c.seed||randSeed();});
+  if(!S.classes[S.current])S.current=Object.keys(S.classes)[0];
+}
+normalize();
+let cardIdx=0;
+const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+const cur=()=>S.classes[S.current];
+function toast(m){const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast._t);toast._t=setTimeout(()=>t.style.display="none",1800);}
+const className=c=>`${c.settings.year} class · ${SHAPES[c.settings.shape]?.label||""}`;
+
+/* ---------------- GENERATION ---------------- */
+function rolesFor(st){
+  const roles=[];FATE_ORDER.forEach(f=>{for(let i=0;i<(st.counts[f]||0);i++)roles.push(f);});
+  const total=Math.max(clamp(st.total,5,30),roles.length);
+  while(roles.length<total)roles.push("prospect");
+  return roles.slice(0,30);
+}
+function pickRange(fate,shape){
+  let [a,b]=PICK_RANGE[fate];
+  if(fate==="star"){if(shape==="top")[a,b]=[1,4];if(shape==="weak")[a,b]=[1,8];}
+  if(shape==="bottom"&&(fate==="steal"))[a,b]=[30,60];
+  if(shape==="bottom"&&(fate==="surprise"))[a,b]=[25,55];
+  if(fate==="prospect"){if(shape==="deep")[a,b]=[5,40];if(shape==="weak")[a,b]=[1,45];if(shape==="bottom")[a,b]=[3,35];}
+  return [a,b];
+}
+function shapeMod(st,pick,gen){
+  const s=st.shape;
+  if(s==="top")return pick<=3?{o:2,p:3}:pick<=10?{o:0,p:1}:{o:-1,p:-1};
+  if(s==="deep")return pick>=11&&pick<=45?{o:1,p:2}:{o:0,p:0};
+  if(s==="weak")return {o:-2,p:-3};
+  if(s==="bottom")return pick<=10?{o:-1,p:-1}:pick>30?{o:2,p:2}:{o:0,p:0};
+  if(s==="custom"){const v=pick<=10?+st.top:+st.dep;return {o:v,p:v};}
+  return {o:0,p:0};
+}
+const tierFor=pick=>TIERS.find(t=>pick<=t.max);
+function chooseArch(r,fate,st){
+  if(fate==="project")return "Raw Project Big";
+  const w=[];
+  for(const [name,a] of Object.entries(ARCHETYPES)){
+    if(name==="Raw Project Big"&&fate!=="prospect")continue;
+    let wt=(+st.mix[a.grp]||0)/100+0.001;
+    if(name==="Raw Project Big")wt*=0.3;
+    if(fate==="bust"&&["Slashing Wing","Rim-Running Big","Two-Way Wing","Shot Creator"].includes(name))wt*=2.2;
+    if(fate==="role"&&["3&D Wing","Sharpshooter","Defensive Stopper","Rim-Running Big"].includes(name))wt*=2.2;
+    if(fate==="surprise"&&["Shot Creator","Point Forward","Floor General","Two-Way Wing"].includes(name))wt*=1.6;
+    if(fate==="star"&&["Shot Creator","Two-Way Wing","Point Forward","Floor General"].includes(name))wt*=1.5;
+    w.push([name,wt]);
+  }
+  const tot=w.reduce((s,x)=>s+x[1],0);let x=r()*tot;
+  for(const [n,wt] of w){x-=wt;if(x<=0)return n;}
+  return w[w.length-1][0];
+}
+function fillBand(fate,shape){let [a,b]=FILL_BAND[fate];if(shape==="top"&&fate==="star")[a,b]=[0,.15];if(shape==="bottom"&&(fate==="steal"||fate==="surprise"))[a,b]=[.65,1];if(shape==="weak"&&fate==="star")[a,b]=[0,.35];return [a,b];}
+function identity(r,fate,st,gen,slot){
+  const archName=chooseArch(r,fate,st),A=ARCHETYPES[archName];
+  const pos=pickOne(r,A.pos);let pos2=pickOne(r,A.pos2.filter(x=>x!==pos))||"";
+  const ht=ri(r,A.h[0],A.h[1]);
+  const wt=clamp(Math.round(A.w[0]+(ht-A.h[0])*(A.w[1]-A.w[0])/Math.max(1,A.h[1]-A.h[0])+ri(r,-8,8)),165,300);
+  let wsReal=ri(r,A.ws[0],A.ws[1]+2)+(fate==="bust"?1:0);
+  const ws=clamp(wsReal,-2,6);
+  // background
+  const intl=r()*100<st.intl, older=r()*100<st.older;
+  let bg,school,country,age,classYr;
+  if(intl){const c=pickOne(r,INTL);country=c[0];bg="International";school=`Pro club (${c[0]})`;age=older?ri(r,21,23):ri(r,19,20);classYr="Intl";
+    var first=pickOne(r,c[1]),last=pickOne(r,c[2]);}
+  else{
+    country="USA";const gl=r()<0.07;
+    if(older){classYr="SR";age=ri(r,22,23);}else{const x=r();const lean=(fate==="star"||fate==="bust")?0.65:(fate==="steal"||fate==="role")?0.3:0.45;classYr=x<lean?"FR":x<lean+0.33?"SO":"JR";age=classYr==="FR"?19:classYr==="SO"?20:21;}
+    if(gl&&classYr!=="SR"){bg="G League (pro path)";school="G League";}else{bg="College";school=pickOne(r,COLLEGES);}
+    var first=pickOne(r,US_FIRST),last=pickOne(r,US_LAST);
+  }
+  const [a,b]=pickRange(fate,st.shape);
+  let desired;
+  if(st.fill){const [fa,fb]=fillBand(fate,st.shape);desired=gen?-1:fa+(fb-fa)*r();}
+  else desired=gen?1:ri(r,a,b);
+  return {id:uid(),slot,fate,gen:!!gen,arch:archName,first,last,pos,pos2,ht,wt,ws,wsReal,bg,school,country,age,classYr,desired};
+}
+function body(p,r,st){
+  const A=ARCHETYPES[p.arch],pick=p.pick;
+  const tier=p.gen?GEN_TIER:tierFor(pick);
+  let frac=0;
+  if(!p.gen){const i=TIERS.indexOf(tier),lo=i?TIERS[i-1].max+1:1,hi=Math.min(tier.max,61);frac=hi>lo?(pick-lo)/(hi-lo):0;}
+  let ovr=Math.round(tier.ovr[1]-(tier.ovr[1]-tier.ovr[0])*frac)+ri(r,-1,1);
+  let pot=Math.round(tier.pot[1]-(tier.pot[1]-tier.pot[0])*frac)+ri(r,-1,1);
+  const sm=p.gen?{o:0,p:0}:shapeMod(st,pick);ovr+=sm.o;pot+=sm.p;
+  let minPot,maxPot,boom,bust,ath=0,men=0,standouts=0,skill=0;
+  switch(p.fate){
+    case "star": pot+=1;minPot=pot-4;maxPot=pot+3;boom=ri(r,25,35);bust=ri(r,8,15);men=2;break;
+    case "surprise": maxPot=pot+ri(r,12,18);minPot=pot-3;boom=ri(r,55,70);bust=ri(r,5,10);men=6;break;
+    case "role": ovr+=1;pot-=1;minPot=pot-2;maxPot=pot+2;boom=ri(r,8,12);bust=ri(r,8,12);standouts=2;break;
+    case "bust": pot+=1;minPot=ovr+ri(r,1,3);maxPot=pot;boom=ri(r,3,8);bust=ri(r,55,70);ath=6;men=-8;break;
+    case "steal": ovr+=3;pot+=4;minPot=pot-3;maxPot=pot+4;boom=ri(r,30,40);bust=ri(r,5,10);men=4;break;
+    case "project": ovr-=4;pot+=3;minPot=ovr+3;maxPot=pot+6;boom=ri(r,30,40);bust=ri(r,30,40);ath=4;skill=-6;break;
+    default: minPot=pot-6;maxPot=pot+3;boom=ri(r,15,25);bust=ri(r,15,25);
+  }
+  ovr=clamp(ovr,45,85);
+  if(p.gen){ovr=clamp(ovr,GEN_TIER.ovr[0],GEN_TIER.ovr[1]);pot=clamp(pot,GEN_TIER.pot[0],GEN_TIER.pot[1]);}else pot=Math.min(pot,95);
+  pot=clamp(Math.max(pot,ovr+2),50,99);
+  minPot=clamp(Math.max(minPot,ovr),ovr,pot);
+  maxPot=clamp(Math.max(maxPot,pot),pot,99);
+  // ratings
+  const ratings={};
+  RATING_GROUPS.forEach(([,list])=>list.forEach(([k])=>{
+    const pr=A.prof[k]??0;
+    let v=ovr+pr*5+ri(r,-4,4);
+    if(ATHLETIC_KEYS.includes(k))v+=ath;
+    if(MENTAL_KEYS.includes(k))v+=men;
+    if(skill&&pr>=1&&!ATHLETIC_KEYS.includes(k))v+=skill;
+    ratings[k]=clamp(Math.round(v),25,99);
+  }));
+  if(standouts){
+    const tops=Object.entries(A.prof).filter(([,v])=>v>=2).map(([k])=>k);
+    for(let i=0;i<standouts&&tops.length;i++){const k=tops.splice(Math.floor(r()*tops.length),1)[0];ratings[k]=Math.max(ratings[k],ri(r,84,90));}
+  }
+  // badges
+  const cand=A.badges.map(n=>BADGES.find(b=>b[0]===n)).filter(b=>b&&p.ht>=b[2]&&p.ht<=b[3]).map(b=>{
+    const v=Math.max(...b[4].map(k=>ratings[k]||0));const t=BADGE_TIERS.find(([n,th])=>v>=th&&(n!=="Hall of Fame"||p.gen));return t?{name:b[0],cat:b[1],tier:t[0],v}:null;}).filter(Boolean)
+    .sort((x,y)=>y.v-x.v||String(x.name).localeCompare(y.name));
+  const nBad=clamp(Math.round((ovr-60)/4)+3,3,7);
+  let badges=cand.slice(0,nBad).map(({name,cat,tier})=>({name,cat,tier}));
+  if(badges.length<3){ // pad with Bronze from pool so each build gets 3+ (house rule)
+    for(const n of A.badges){if(badges.length>=3)break;const b=BADGES.find(x=>x[0]===n);if(b&&p.ht>=b[2]&&p.ht<=b[3]&&!badges.some(x=>x.name===n))badges.push({name:n,cat:b[1],tier:"Bronze"});}
+  }
+  // tendencies
+  const tend={};
+  Object.entries(A.tend).forEach(([k,v])=>{let x=v+ri(r,-6,6);if(k==="Shot"||k==="Touches")x+=Math.round((ovr-70)*0.8)+(p.fate==="star"?6:0);
+    if(k==="Dish to Open Man"&&p.pos!=="PG")x=Math.max(x,20);if(k==="Dish to Open Man"&&p.pos==="PG")x=Math.max(x,70);tend[k]=clamp(x,0,100);});
+  // peak ages (OS community guide: wings ~23–24, PG/C later; athletic decline ~30–31, skill ~32–33)
+  const dev=(p.pos==="PG"||p.pos==="C")?A.dev:4;
+  const peakStart=clamp(p.age+dev-(p.age>=22?1:0)+(p.fate==="project"?1:0),22,27);
+  const peakEnd=A.peak==="athletic"?ri(r,30,31):ri(r,32,33);
+  const grp=A.grp;
+  const notes=[`${pickOne(r,BUILD[grp])} build`,pickOne(r,HAIR),pickOne(r,LOOK),pickOne(r,A.style)];
+  return Object.assign(p,{tier:tier.label,ovr,pot,potL:letter(pot),minPot,maxPot,boom,bust,ratings,badges,tend,peakStart,peakEnd,notes});
+}
+function forge(cls,keepIds){
+  const st=cls.settings,roles=rolesFor(st);st.total=roles.length;
+  const old={};cls.prospects.forEach(p=>old[p.slot]=p);
+  let genSlot=-1;
+  if(st.shape==="gen"&&!cls.prospects.some(p=>p.locked&&p.gen)){
+    genSlot=roles.findIndex((f,i)=>f==="star"&&!(old[i]&&old[i].locked));
+    if(genSlot<0){genSlot=roles.findIndex((f,i)=>f==="prospect"&&!(old[i]&&old[i].locked));if(genSlot>=0)roles[genSlot]="star";}
+  }
+  const work=[];
+  roles.forEach((fate,slot)=>{
+    const o=old[slot];
+    if(o&&(o.locked||(keepIds&&keepIds.has(o.id)))){work.push({keep:o});return;}
+    const rr=o?o.rr||0:0,r=rngFor(cls.seed,slot,rr);
+    const p=identity(r,fate,st,slot===genSlot,slot);p.rr=rr;p.locked=false;
+    work.push({p,r});
+  });
+  // unique picks: kept first, then by desired
+  const used=new Set(work.filter(w=>w.keep).map(w=>w.keep.pick));
+  const fresh=work.filter(w=>w.p).sort((a,b)=>a.p.desired-b.p.desired||a.p.slot-b.p.slot);
+  if(st.fill){ // contiguous: fresh prospects take the free picks 1..N in order of their fate band
+    const free=[];for(let i=1;free.length<fresh.length;i++)if(!used.has(i))free.push(i);
+    const F=free.length,taken=new Array(F).fill(false),PRI=["star","bust","surprise","steal","project","role","prospect"];
+    // tightest bands claim first; each takes the free slot nearest its rolled spot, inside its band when possible
+    const M=F-1,bandIdx=f=>{const [fa,fb]=fillBand(f,st.shape);return [fa<=0?0:Math.ceil(fa*M),Math.floor(fb*M)];};
+    const [blo,bhi]=bandIdx("bust");let bustsLeft=fresh.filter(w=>w.p.fate==="bust").length;
+    fresh.slice().sort((x,y)=>(x.p.gen?-1:PRI.indexOf(x.p.fate))-(y.p.gen?-1:PRI.indexOf(y.p.fate))||x.p.desired-y.p.desired||x.p.slot-y.p.slot).forEach(w=>{
+      const [lo,hi]=bandIdx(w.p.fate),tgt=w.p.gen?0:Math.round(Math.max(0,w.p.desired)*M);
+      // stars avoid the bust band when busts would otherwise run out of room there
+      let freeBust=0;for(let i=blo;i<=bhi&&i<F;i++)if(!taken[i])freeBust++;
+      const reserve=w.p.fate!=="bust"&&bustsLeft>0&&bustsLeft>=freeBust;
+      let best=-1,bd=1e9;
+      for(let pass=0;pass<3&&best<0;pass++)for(let i=0;i<F;i++){if(taken[i])continue;if(pass<2&&(i<lo||i>hi))continue;if(pass===0&&reserve&&i>=blo&&i<=bhi)continue;if(pass===0&&!reserve)continue;const d=Math.abs(i-tgt);if(d<bd){bd=d;best=i;}}
+      if(w.p.fate==="bust")bustsLeft--;
+      taken[best]=true;w.p.pick=free[best];delete w.p.desired;
+    });
+  } else fresh.forEach(w=>{
+    let d=0,pk;
+    while(true){const up=w.p.desired+d,dn=w.p.desired-d;if(!used.has(up)){pk=up;break;}if(dn>=1&&!used.has(dn)){pk=dn;break;}d++;}
+    used.add(pk);w.p.pick=pk;delete w.p.desired;
+  });
+  work.forEach(w=>{if(w.p)body(w.p,w.r,st);});
+  const ids=new Set(work.map(w=>(w.keep||w.p).id));
+  Object.keys(cls.checks).forEach(k=>{if(!ids.has(k))delete cls.checks[k];});
+  cls.prospects=work.map(w=>w.keep||w.p);
+  return cls;
+}
+function rerollOne(cls,id){
+  const p=cls.prospects.find(x=>x.id===id);if(!p)return;
+  if(p.locked){toast("Unlock first 🔒");return;}
+  const keep=new Set(cls.prospects.filter(x=>x.id!==id).map(x=>x.id));
+  const oldId=p.id;p.rr=(p.rr||0)+1;
+  forge(cls,keep);delete cls.checks[oldId];
+}
+
+/* ---------------- RENDER: setup ---------------- */
+function renderClassSel(){
+  const cs=Object.values(S.classes).sort((a,b)=>b.created-a.created);
+  $("#classSel").innerHTML=cs.map(c=>`<option value="${c.id}" ${c.id===S.current?"selected":""}>${esc(className(c))} · ${c.prospects.length} builds</option>`).join("");
+}
+function stepper(id,val){return `<div class="stp"><button data-st="${id}" data-d="-1" aria-label="minus">−</button><span id="sv_${id}">${val}</span><button data-st="${id}" data-d="1" aria-label="plus">+</button></div>`;}
+function renderSetup(){
+  const st=cur().settings;
+  $("#s_year").value=st.year;$("#s_seed").value=cur().seed;
+  $("#s_shape").innerHTML=Object.entries(SHAPES).map(([k,v])=>`<button class="chip ${st.shape===k?"on":""}" data-shape="${k}">${v.label}</button>`).join("");
+  $("#s_shapeInfo").textContent=SHAPES[st.shape].info+" (house rules)";
+  $("#s_custom").style.display=st.shape==="custom"?"":"none";
+  $("#s_top").value=st.top;$("#s_topv").textContent=(st.top>0?"+":"")+st.top;$("#s_dep").value=st.dep;$("#s_depv").textContent=(st.dep>0?"+":"")+st.dep;
+  $("#s_counts").innerHTML=FATE_ORDER.map(f=>`<div class="cnt"><div class="lb">${FATES[f].icon} ${FATES[f].count}<small>${FATES[f].help}</small></div>${stepper(f,st.counts[f])}</div>`).join("")+
+    `<div class="cnt"><div class="lb"><b>Total builds</b><small>5–30; the rest auto-fill as ▫️ Solid Prospects</small></div>${stepper("total",st.total)}</div>`;
+  const fixed=FATE_ORDER.reduce((s,f)=>s+st.counts[f],0);
+  $("#s_fillPicks").checked=!!st.fill;
+  $("#s_fill").textContent=`${fixed} fated + ${Math.max(0,st.total-fixed)} solid prospects = ${Math.max(st.total,fixed)} builds`;
+  [["g","G"],["w","W"],["b","B"]].forEach(([id,k])=>{$("#s_"+id).value=st.mix[k];$("#s_"+id+"v").textContent=st.mix[k];});
+  $("#s_i").value=st.intl;$("#s_iv").textContent=st.intl;$("#s_o").value=st.older;$("#s_ov").textContent=st.older;
+}
+/* ---------------- RENDER: board ---------------- */
+const pickTxt=p=>p.pick>60?"UDFA":"#"+p.pick;
+function fateBadge(p,force){if(!S.showFates&&!force)return `<span class="fate f-hidden">❓ hidden</span>`;const f=FATES[p.fate];return `<span class="fate ${f.cls}">${f.icon} ${f.label}</span>`;}
+function sorted(){return cur().prospects.slice().sort((a,b)=>a.pick-b.pick);}
+function renderBoard(){
+  const c=cur(),list=sorted();
+  $("#bTitle").textContent=className(c);
+  $("#bSub").textContent=`${list.length} builds · seed "${c.seed}" · ${c.settings.fill?"picks 1–"+list.length:"spread picks"}`;
+  $("#spoilBtn").textContent=S.showFates?"🙈 Hide fates":"👁 Show fates";
+  const cnt={};list.forEach(p=>cnt[p.fate]=(cnt[p.fate]||0)+1);
+  $("#bSum").innerHTML=S.showFates?Object.entries(cnt).map(([f,n])=>`<span class="fate ${FATES[f].cls}">${FATES[f].icon} ${n}</span>`).join(""):`<span class="info">Fates are hidden. Spoiler-free scouting!</span>`;
+  $("#bList").innerHTML=list.length?list.map(p=>{
+    const ck=c.checks[p.id]||{},prog=cardFields(p),done=prog.filter(f=>ck[f.k]).length;
+    return `<div class="card"><div class="pros">
+      <div class="pk">${pickTxt(p)}<small>${esc(p.tier)}</small></div>
+      <div class="grow"><div class="nm">${esc(p.first)} ${esc(p.last)}</div>
+        <div class="meta">${esc(p.pos)}${p.pos2?"/"+esc(p.pos2):""} · ${ftIn(p.ht)} · ${p.wt} lb · ${p.age}y · ${esc(p.school)}</div>
+        <div class="meta"><b style="color:var(--txt)">${esc(p.arch)}</b> · target ${p.ovr} OVR · POT ${p.potL} (${p.pot})</div>
+        <div>${fateBadge(p)} <span class="tag">Card ${done}/${prog.length}</span></div></div>
+      <div class="ic"><button data-lock="${p.id}" class="${p.locked?"on":""}" aria-label="Lock">${p.locked?"🔒":"🔓"}</button><button data-reroll="${p.id}" aria-label="Re-roll">🎲</button><button data-card="${p.id}" aria-label="Open card">✅</button></div>
+    </div></div>`;}).join(""):`<div class="empty">No builds yet. Go to Setup → ⚒️ Forge class.</div>`;
+}
+/* ---------------- CARD ---------------- */
+const VITAL_LABEL={first:"First Name",last:"Last Name",pos:"Position",pos2:"Secondary Position",height:"Height",weight:"Weight",wing:"Wingspan",age:"Age",school:"College / Team",country:"Nationality"};
+const POT_LABEL={pot:"Potential",minPot:"Min Potential",maxPot:"Max Potential",bust:"Bust %",boom:"Boom %",peakStart:"Peak Start Age",peakEnd:"Peak End Age"};
+function cardFields(p){
+  const out=[];
+  CARD_ORDER.forEach(sec=>{
+    if(sec==="@vitals")VITALS_ORDER.forEach(k=>{const v={first:p.first,last:p.last,pos:p.pos,pos2:p.pos2||"—",height:ftIn(p.ht),weight:p.wt+" lb",wing:(p.ws>=0?"+":"")+p.ws+'"',age:p.age,school:p.school,country:p.country}[k];
+      out.push({k:"v:"+k,sec:"Vitals",lab:VITAL_LABEL[k],v,sub:k==="wing"?`${ftIn(p.ht+p.ws)} total${p.wsReal>6?" · capped at +6 (2K27 limit ⚠️)":""}`:k==="school"?p.bg+(p.classYr?" · "+p.classYr:""):""});});
+    if(sec==="@ratings")RATING_GROUPS.forEach(([g,list])=>list.forEach(([k,n])=>out.push({k:"r:"+k,sec:"Ratings · "+g,lab:n,v:p.ratings[k]})));
+    if(sec==="@potential")POTENTIAL_ORDER.forEach(k=>out.push({k:"p:"+k,sec:"Potential & boom/bust (spoilery)",lab:POT_LABEL[k],v:k==="pot"?`${p.pot} (${p.potL})`:(k==="bust"||k==="boom")?p[k]+"%":p[k]}));
+    if(sec==="@badges")p.badges.forEach(b=>out.push({k:"b:"+b.name,sec:"Badges (suggested, requirements unverified)",lab:b.name,v:b.tier,sub:b.cat}));
+    if(sec==="@tendencies")Object.entries(p.tend).forEach(([k,v])=>out.push({k:"t:"+k,sec:"Key tendencies (names approximate)",lab:k,v}));
+    if(sec==="@appearance")p.notes.forEach((n,i)=>out.push({k:"a:"+i,sec:"Appearance & style",lab:n,v:""}));
+  });
+  return out;
+}
+function renderCard(){
+  const c=cur(),list=sorted();
+  if(!list.length){$("#cardSel").innerHTML="";$("#cardBody").innerHTML=`<div class="empty">Forge a class first.</div>`;return;}
+  cardIdx=clamp(cardIdx,0,list.length-1);
+  const p=list[cardIdx],f=cardFields(p);if(!c.checks[p.id]){c.checks[p.id]={};save();}const ck=c.checks[p.id];
+  $("#cardSel").innerHTML=list.map((x,i)=>{const ff=cardFields(x),cc=c.checks[x.id]||{},n=ff.filter(y=>cc[y.k]).length;return `<option value="${i}" ${i===cardIdx?"selected":""}>${n===ff.length?"✅ ":""}${pickTxt(x)} ${esc(x.first)} ${esc(x.last)} (${n}/${ff.length})</option>`;}).join("");
+  const n=f.filter(x=>ck[x.k]).length;
+  let sec="",html=`<div class="card pros"><div class="pk">${pickTxt(p)}<small>${esc(p.tier)}</small></div><div class="grow"><div class="nm" style="font-size:20px">${esc(p.first)} ${esc(p.last)}</div><div class="meta">${esc(p.arch)} · target ${p.ovr} OVR (2K computes the real one) · ${fateBadge(p)}</div></div></div>
+  <div class="row info"><span class="grow" id="cProgTxt">${n}/${f.length} fields entered</span><button class="ghost" id="ckReset" style="min-height:36px;padding:4px 10px;font-size:13px">Reset</button></div>
+  <div class="prog"><i id="cProg" style="width:${n/f.length*100}%"></i></div>`;
+  f.forEach(x=>{if(x.sec!==sec){sec=x.sec;html+=`<div class="sec">${esc(sec)}</div>`;}
+    html+=`<div class="fld ${ck[x.k]?"ck":""}" data-k="${esc(x.k)}"><div class="bx">${ck[x.k]?"✓":""}</div><div class="lb">${esc(x.lab)}${x.sub?`<small>${esc(x.sub)}</small>`:""}</div><div class="vl">${esc(x.v)}</div></div>`;});
+  html+=`<div class="grid2" style="margin-top:12px"><button id="cPrev">← Prev</button><button class="pri" id="cNext">Next player →</button></div>`;
+  $("#cardBody").innerHTML=html;
+  $("#cardBody").querySelectorAll(".fld").forEach(el=>el.onclick=()=>{const k=el.dataset.k;ck[k]=!ck[k];save();el.classList.toggle("ck",!!ck[k]);el.querySelector(".bx").textContent=ck[k]?"✓":"";
+    const nn=f.filter(x=>ck[x.k]).length;$("#cProgTxt").textContent=`${nn}/${f.length} fields entered`;$("#cProg").style.width=nn/f.length*100+"%";
+    const o=$("#cardSel").options[cardIdx];if(o)o.text=`${nn===f.length?"✅ ":""}${pickTxt(p)} ${p.first} ${p.last} (${nn}/${f.length})`;if(nn===f.length)toast("Build done! 🎉 Next player");});
+  $("#ckReset").onclick=()=>{c.checks[p.id]={};save();renderCard();};
+  $("#cPrev").onclick=()=>{cardIdx=Math.max(0,cardIdx-1);renderCard();window.scrollTo(0,0);};
+  $("#cNext").onclick=()=>{if(cardIdx<list.length-1){cardIdx++;renderCard();window.scrollTo(0,0);}else toast("That's the whole class 🏁");};
+}
+$("#cardSel").onchange=e=>{cardIdx=+e.target.value;renderCard();};
+
+/* ---------------- DATA ---------------- */
+function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);}
+const csvCell=v=>{v=v==null?"":String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+function buildCsv(c){
+  const rk=RATING_GROUPS.flatMap(g=>g[1]);
+  const head=["Year","Pick","Tier","First","Last","Pos","Pos2","Height","Weight_lb","Wingspan_in","Age","Background","School","Nationality","Archetype","Fate","Target_OVR","Potential","Pot_Letter","Min_Pot","Max_Pot","Bust_pct","Boom_pct","Peak_Start","Peak_End",...rk.map(([,n])=>n),"Badges","Tendencies","Appearance","Locked"];
+  const rows=sorted().map(p=>[c.settings.year,p.pick>60?"UDFA":p.pick,p.tier,p.first,p.last,p.pos,p.pos2,ftIn(p.ht),p.wt,p.ws,p.age,p.bg,p.school,p.country,p.arch,FATES[p.fate].label,p.ovr,p.pot,p.potL,p.minPot,p.maxPot,p.bust,p.boom,p.peakStart,p.peakEnd,...rk.map(([k])=>p.ratings[k]),p.badges.map(b=>`${b.name} (${b.tier})`).join("; "),Object.entries(p.tend).map(([k,v])=>`${k} ${v}`).join("; "),p.notes.join("; "),p.locked?"yes":""]);
+  return [head,...rows].map(r=>r.map(csvCell).join(",")).join("\n");
+}
+function importJson(txt){
+  let d;try{d=JSON.parse(txt);}catch(e){toast("That's not valid JSON");return false;}
+  if(!d||d.app!=="class-forge"||!d.classes){toast("Not a Class Forge backup");return false;}
+  if(!confirm("Replace everything on this phone with this backup?"))return false;
+  S=d;normalize();save();renderAll();toast("Backup restored ✓");return true;
+}
+
+/* ---------------- WIRING ---------------- */
+function renderAll(){renderClassSel();renderSetup();renderBoard();if($("#v-card").classList.contains("on"))renderCard();}
+function show(v){document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));if(v==="card")renderCard();if(v==="board")renderBoard();if(v==="setup")renderSetup();window.scrollTo(0,0);}
+document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+$("#classSel").onchange=e=>{S.current=e.target.value;cardIdx=0;save();renderAll();};
+$("#newClassBtn").onclick=()=>{const st=JSON.parse(JSON.stringify(cur().settings));st.year=+st.year+1;const c=newClass(st);S.classes[c.id]=c;S.current=c.id;save();renderAll();show("setup");toast("New class: "+st.year);};
+$("#s_year").oninput=e=>{cur().settings.year=+e.target.value||cur().settings.year;save();renderClassSel();};
+$("#s_seed").oninput=e=>{cur().seed=e.target.value.trim()||cur().seed;save();};
+$("#newSeed").onclick=()=>{cur().seed=randSeed();save();renderSetup();};
+$("#s_shape").onclick=e=>{const b=e.target.closest("[data-shape]");if(!b)return;cur().settings.shape=b.dataset.shape;save();renderSetup();renderClassSel();};
+$("#s_top").oninput=e=>{cur().settings.top=+e.target.value;save();renderSetup();};
+$("#s_dep").oninput=e=>{cur().settings.dep=+e.target.value;save();renderSetup();};
+[["g","G"],["w","W"],["b","B"]].forEach(([id,k])=>$("#s_"+id).oninput=e=>{cur().settings.mix[k]=+e.target.value;$("#s_"+id+"v").textContent=e.target.value;save();});
+$("#s_fillPicks").onchange=e=>{cur().settings.fill=e.target.checked;save();toast(e.target.checked?"Fill picks 1–N: ON (re-forge to apply)":"Spread across 60 picks (re-forge to apply)");};
+$("#s_i").oninput=e=>{cur().settings.intl=+e.target.value;$("#s_iv").textContent=e.target.value;save();};
+$("#s_o").oninput=e=>{cur().settings.older=+e.target.value;$("#s_ov").textContent=e.target.value;save();};
+$("#s_counts").onclick=e=>{const b=e.target.closest("[data-st]");if(!b)return;const st=cur().settings,k=b.dataset.st,d=+b.dataset.d;
+  if(k==="total")st.total=clamp(st.total+d,5,30);else{st.counts[k]=clamp(st.counts[k]+d,0,30);const fixed=FATE_ORDER.reduce((s,f)=>s+st.counts[f],0);if(fixed>30){st.counts[k]-=1;toast("Max 30 builds");}else if(fixed>st.total)st.total=fixed;}
+  save();renderSetup();};
+$("#forgeBtn").onclick=()=>{forge(cur());cardIdx=0;save();renderAll();show("board");toast(`Forged ${cur().prospects.length} builds ⚒️`);};
+$("#rerollAll").onclick=()=>{cur().seed=randSeed();forge(cur());save();renderAll();show("board");toast("Re-rolled (locked kept)");};
+$("#toBoard").onclick=()=>show("board");
+$("#spoilBtn").onclick=()=>{S.showFates=!S.showFates;save();renderBoard();};
+$("#bList").onclick=e=>{const c=cur();
+  const l=e.target.closest("[data-lock]"),rr=e.target.closest("[data-reroll]"),cd=e.target.closest("[data-card]");
+  if(l){const p=c.prospects.find(x=>x.id===l.dataset.lock);p.locked=!p.locked;save();renderBoard();toast(p.locked?"Locked 🔒":"Unlocked");}
+  else if(rr){rerollOne(c,rr.dataset.reroll);save();renderBoard();renderClassSel();}
+  else if(cd){cardIdx=sorted().findIndex(p=>p.id===cd.dataset.card);show("card");}
+};
+$("#expJson").onclick=()=>download(`class-forge-backup-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(S,null,1),"application/json");
+$("#copyJson").onclick=async()=>{const t=JSON.stringify(S);try{await navigator.clipboard.writeText(t);toast("Copied. Paste it into Notes");}catch(e){$("#impText").value=t;toast("Copy blocked. JSON is in the box below");}};
+$("#expCsv").onclick=()=>download(`class-forge-${cur().settings.year}.csv`,buildCsv(cur()),"text/csv");
+$("#impFileBtn").onclick=()=>$("#impFile").click();
+$("#impFile").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(importJson);e.target.value="";};
+$("#impPaste").onclick=()=>{if(importJson($("#impText").value))$("#impText").value="";};
+$("#delClass").onclick=()=>{if(!confirm("Delete this class?"))return;delete S.classes[S.current];normalize();S.current=Object.keys(S.classes)[0];save();renderAll();toast("Deleted");};
+window.__CF={get state(){return S;},forge,rerollOne,buildCsv,cur};
+renderAll();
+</script>
+</body>
+</html>
