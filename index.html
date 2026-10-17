@@ -72,6 +72,14 @@ nav.tabs button.on{color:var(--acc)}
 .why{padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
 .chip.wk{border-color:var(--bad);background:#3a0f14;color:#ff9aa4}
 .tick{display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-top:-4px}
+.quick{border-color:var(--acc)}
+summary.sum2{list-style:none;cursor:pointer;font-weight:700;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);margin:10px 0;min-height:48px}
+summary.sum2::-webkit-details-marker{display:none}details[open] summary.sum2{color:var(--acc)}
+.qrow{display:grid;grid-template-columns:86px minmax(0,1fr);gap:8px;align-items:center;margin:6px 0}
+.qrow>span{font-size:12px;color:var(--mut)}
+.qrow select,.qrow input{min-height:42px;padding:6px 10px}
+.qsrc{font-size:11px;color:var(--mut)}
+.chip.ig{opacity:.6;border-style:dashed}
 .empty{color:var(--mut);text-align:center;padding:24px 8px}
 .sum{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 ol.how li{margin:6px 0}
@@ -127,6 +135,14 @@ ol.how li{margin:6px 0}
 
 <!-- BUILD A PLAYER -->
 <section id="v-build" class="view">
+  <div class="card quick">
+    <div class="sec" style="margin-top:0">⚡ Quick: just say it</div>
+    <textarea id="q_text" rows="3" placeholder="I want a generationally talented Small Forward who's 6'9 and known for his athleticism"></textarea>
+    <div class="grid2" style="margin-top:8px"><button class="pri" id="q_go">⚡ Generate</button><button id="q_ex">💡 Example</button></div>
+    <div class="info" style="margin-top:6px">Works offline with plain word rules (no AI). Say a position, height, talent level, caps ("never better than 83"), and skills.</div>
+    <div id="q_under"></div>
+  </div>
+  <details id="b_full" open><summary class="sum2">🛠️ Full Build (every detail)</summary>
   <div class="note">Build one player from a backstory. Fill in what you know; everything else is auto. House rules, not 2K's formula.</div>
   <div class="card">
     <div class="sec" style="margin-top:0">Basics</div>
@@ -137,6 +153,7 @@ ol.how li{margin:6px 0}
     <div class="grid2"><div><label class="f">Age</label><select id="b_age" data-bi="age"></select></div><div><label class="f">Background</label><select id="b_bg" data-bi="bg"></select></div></div>
     <div class="grid2"><div><label class="f">College / club</label><input type="text" id="b_school" data-bi="school" placeholder="e.g. Oregon State University"></div><div><label class="f">Country</label><input type="text" id="b_country" data-bi="country"></div></div>
     <div class="grid2"><div><label class="f">Projected pick / tier</label><select id="b_tier" data-bi="tier"></select></div><div><label class="f">Fate (optional)</label><select id="b_fate" data-bi="fate"></select></div></div>
+    <div class="grid3"><div><label class="f">Max Pot cap</label><input type="number" inputmode="numeric" id="b_capMax" data-bi="capMax" placeholder="none"></div><div><label class="f">Min Pot floor</label><input type="number" inputmode="numeric" id="b_capFloor" data-bi="capFloor" placeholder="none"></div><div><label class="f">Start OVR</label><input type="number" inputmode="numeric" id="b_capStart" data-bi="capStart" placeholder="auto"></div></div>
     <label class="f">Seed</label><div class="row"><input type="text" id="b_seed" data-bi="seed" class="grow" autocomplete="off"><button id="b_newSeed" style="min-width:48px;padding:0" aria-label="New seed">🎲</button></div>
   </div>
   <div class="card">
@@ -154,6 +171,7 @@ ol.how li{margin:6px 0}
   </div>
   <div class="card"><div class="sec" style="margin-top:0">Weaknesses (optional)</div><div class="chips" id="b_weak"></div></div>
   <div class="grid2"><button class="pri" id="b_go">🛠️ Build player</button><button class="ghost" id="b_resetForm">Clear form</button></div>
+  </details>
   <div id="b_out"></div>
 </section>
 
@@ -678,7 +696,7 @@ const WEAK = {
 const TIER_OPTS=[["auto","Auto (from inputs)"],["gen","Generational #1"],["3","Top 5 (~#3)"],["10","Lottery (~#10)"],["18","Mid 1st (~#18)"],["27","Late 1st (~#27)"],["38","Early 2nd (~#38)"],["52","Late 2nd (~#52)"],["65","Undrafted"]];
 const FATE_OPTS=[["none","None"],["star","Star"],["surprise","Surprise star"],["role","Role player"],["bust","Bust"],["steal","Steal"],["project","Project"]];
 const POSS=["PG","SG","SF","PF","C"];
-function defaultBuildInputs(){return {first:"",last:"",ft:6,inch:4,wt:"",ws:"auto",pos:"PG",pos2:"",age:"auto",bg:"College",school:"",country:"USA",tier:"auto",fate:"none",seed:randSeed(),skills:{},text:"",ath:{},weak:{}};}
+function defaultBuildInputs(){return {first:"",last:"",ft:6,inch:4,wt:"",ws:"auto",pos:"PG",pos2:"",age:"auto",bg:"College",school:"",country:"USA",tier:"auto",fate:"none",seed:randSeed(),skills:{},text:"",ath:{},weak:{},capMax:"",capFloor:"",capStart:"",archHint:""};}
 function defaultBuild(){return {inputs:defaultBuildInputs(),rr:0,lockedR:{},result:null,parsed:null};}
 function sgn(n){return (n>0?"+":"")+n;}
 
@@ -710,6 +728,7 @@ function pickArchetype(inp,ht){
     for(const [k,,map] of ATH){const lv=+(inp.ath||{})[k]||0;if(!lv)continue;const main=Object.keys(map)[0];sc+=(lv-3)*(A.prof[main]||0)*.3;}
     for(const [k,on] of Object.entries(inp.weak||{})){if(!on||!WEAK[k])continue;for(const [rk,w] of Object.entries(WEAK[k].r))sc-=Math.max(0,A.prof[rk]||0)*w*.6;}
     if(name==="Raw Project Big"&&inp.fate!=="project")sc-=2;
+    if(inp.archHint===name)sc+=6; // Quick-mode archetype word (e.g. "3 and D") wins unless height rules it out
     res.push({name,sc,dist,hits});
   }
   if(!res.length){const n=inp.pos==="C"||inp.pos==="PF"?"Rim-Running Big":inp.pos==="PG"?"Floor General":"Two-Way Wing";return {arch:n,reason:`Fallback for ${inp.pos} (no archetype within 3" of this height)`};}
@@ -750,7 +769,9 @@ function buildSingle(inp,rr,lockedR){
   const {arch,reason}=pickArchetype(inp,ht),A=ARCHETYPES[arch];
   const fate=inp.fate&&inp.fate!=="none"?inp.fate:"prospect";
   const gen=inp.tier==="gen";
-  const pick=gen?1:inp.tier==="auto"?autoPick(inp,fate):+inp.tier;
+  const capM=+inp.capMax||0,capF=+inp.capFloor||0,capS=+inp.capStart||0;
+  let pick=gen?1:inp.tier==="auto"?autoPick(inp,fate):+inp.tier;
+  if(!gen&&inp.tier==="auto"&&capM)pick=Math.max(pick,+capTier(capM)); // a hard ceiling implies a later pick
   const intl=inp.bg==="International";
   const cty=(inp.country||"").trim().toLowerCase();
   const nameSet=INTL.find(c=>c[0].toLowerCase()===cty);
@@ -764,6 +785,16 @@ function buildSingle(inp,rr,lockedR){
   const p={id:uid(),slot:1000,fate,gen,arch,archReason:reason,first,last,pos:inp.pos,pos2:inp.pos2&&inp.pos2!==inp.pos?inp.pos2:"",ht,wt,ws,wsReal:ws,
     bg:inp.bg,school:(inp.school||"").trim()||(intl?"Pro club":inp.bg==="G League"?"G League":"—"),country:(inp.country||"").trim()||"USA",age,classYr,pick,single:true,locked:false};
   body(p,r,{shape:"none"});
+  // Hard caps/floors (Quick mode or full form). Honored exactly: Max Potential = cap; OVR and Potential <= cap.
+  const capLines=[];let dO=0;
+  if(capS){dO+=capS-p.ovr;p.ovr=capS;capLines.push(`Target OVR set to ${capS}`);}
+  if(capM&&p.ovr>capM){dO+=capM-p.ovr;p.ovr=capM;}
+  if(dO){Object.keys(p.ratings).forEach(k=>p.ratings[k]=clamp(p.ratings[k]+dO,25,99));}
+  if(capM){p.pot=Math.min(Math.max(p.pot,p.ovr),capM);p.maxPot=capM;p.boom=Math.min(p.boom,5);capLines.push(`Hard ceiling: Max Potential ${capM}, Boom % ≤ 5`);}
+  else p.pot=Math.max(p.pot,p.ovr);
+  if(capF){const f=capM?Math.min(capF,capM):capF;p.minPot=Math.max(p.minPot,f);p.pot=Math.max(p.pot,p.minPot);if(capM)p.pot=Math.min(p.pot,capM);else p.maxPot=Math.max(p.maxPot,p.pot);if(p.ovr>p.minPot)p.ovr=p.minPot;capLines.push(`Floor: Min Potential ≥ ${f}${capM&&capF>capM?" (cap wins)":""}`);}
+  p.minPot=clamp(Math.max(p.minPot,p.ovr),p.ovr,p.pot);p.maxPot=Math.max(p.maxPot,p.pot);if(capM)p.maxPot=capM;p.potL=letter(p.pot);
+  p.capLines=capLines;
   // apply inputs, tracking why
   const why={},base={...p.ratings},note=(k,s)=>(why[k]=why[k]||[]).push(s);
   for(const [k,lab,map] of ATH){const lv=+(inp.ath||{})[k]||0;if(!lv)continue;const tgt=ATH_TGT[lv]+ri(r,-2,2);
@@ -804,6 +835,142 @@ function addToClass(cls,player,pick){
   q.pick=pick;cls.prospects.push(q);return q;
 }
 
+/* ===================== QUICK MODE: one plain-English sentence (offline rules) ===================== */
+const NUMW={zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11};
+const POS_H={PG:[72,76],SG:[75,78],SF:[78,81],PF:[80,83],C:[82,86]};
+const COUNTRIES=INTL.map(c=>c[0]).concat(["Congo","DR Congo","Mali","Croatia","Slovenia","Italy","Israel","China","Mexico","Ghana","Sudan","South Sudan","Bahamas","Jamaica","New Zealand","Finland","Montenegro","Bosnia","Ukraine","Poland","Czech Republic","Dominican Republic","Puerto Rico","Philippines","Georgia","Belgium","Netherlands","Sweden","Russia","Egypt","Angola","Uganda","South Korea","Venezuela","Uruguay","Portugal","England","UK","Ireland","Iceland","Estonia","Montreal","Toronto"]);
+const QSTOP=new Set("i i'm im i’d i'd want wanna need give me make create build generate a an the who who's whos who’s that is he he's hes his him with and or but of to for in on at from by as known really very guy player prospect kid dude man talent talented gets get got better than rating ratings overall ovr can be been has have will would just like some type kind pretty super also plus real should so it its it's this one some draft class nba 2k 2k27 my our please someone somebody body potential pot built build with who'll will that's".split(" "));
+const TIER_REP=[[5,"3"],[14,"10"],[22,"18"],[30,"27"],[45,"38"],[60,"52"],[999,"65"]];
+function capTier(cap){for(const t of TIERS){if(t.pot[1]<=cap+1){return TIER_REP.find(x=>x[0]===t.max)[1];}}return "65";}
+function quickParse(text,seed){
+  const orig=String(text||""),low=orig.toLowerCase().replace(/[’‘]/g,"'").replace(/[“”]/g,'"');
+  const used=[],U=[];
+  const overlaps=(a,b)=>used.some(([x,y])=>a<y&&b>x);
+  const scan=(re,cb)=>{for(const m of low.matchAll(re)){const a=m.index,b=a+m[0].length;if(overlaps(a,b))continue;if(cb(m)!==false)used.push([a,b]);}};
+  const lvlAt=i=>{const w=low.slice(Math.max(0,i-28),i);return /really|elite|incredible|lights[ -]out|knockdown|great|best|special|lockdown|known for|world[ -]class|unreal|absurd|freak|insane/.test(w)?3:/decent|solid|\bgood\b|\bok\b|okay|average/.test(w)?1:2;};
+  const R={positions:[],ht:null,htSrc:"",htHint:0,tier:"auto",tierWhy:"",fate:"none",fateWhy:"",cap:"",floor:"",start:"",skills:{},ath:{},weak:{},ws:"auto",age:"auto",bg:"College",school:"",country:"USA",first:"",last:"",hint:"",notes:[]};
+  const sk=(k,l)=>{R.skills[k]=Math.max(R.skills[k]||0,l);};
+  const at=(k,l)=>{R.ath[k]=Math.max(R.ath[k]||0,l);};
+  // name + origin (case-sensitive on original text)
+  for(const m of orig.matchAll(/\b(?:named|called)\s+([A-Z][a-z'’-]+)(?:\s+([A-Z][a-z'’-]+))?/g)){R.first=m[1];R.last=m[2]||"";used.push([m.index,m.index+m[0].length]);}
+  for(const m of low.matchAll(/\b(?:from|out of|of|at|plays? for|played at|via)\s+([a-z][a-z .'&-]{1,40})/g)){
+    const rest=m[1];const c=COUNTRIES.find(c=>rest.startsWith(c.toLowerCase())&&!/[a-z]/.test(rest.charAt(c.length)||" "));
+    const a=m.index,start=a+m[0].length-rest.length;
+    if(c){R.country=c;R.bg="International";R.school=`Pro club (${c})`;used.push([a,start+c.length]);continue;}
+    const om=orig.slice(start).match(/^((?:[A-Z][\w.'’&-]*)(?:\s+(?:[A-Z][\w.'’&-]*|of|the|de|A&M))*)/);
+    if(om&&!/^(I|He|His|The)$/.test(om[1])){R.school=om[1].trim();used.push([a,start+om[1].length]);}
+  }
+  scan(/\b(international|overseas|euro(?:pean)?|foreign)\b/g,()=>{R.bg="International";if(R.country==="USA"){R.country=pickOne(rngFor(seed,"cty"),INTL)[0];R.school=`Pro club (${R.country})`;}});
+  // caps / floors / starting OVR
+  scan(/\b(?:never (?:gets?|got|will get|becomes?) (?:any )?(?:better|higher|above) than|never (?:goes|gets) (?:above|past|over)|tops? out (?:at|around)|maxe?s? out at|caps? out at|max(?:imum)?(?: potential)?(?: of| at| is)?|peaks? at|capped at|cap(?: of| at)?|ceiling(?: of| at| is)?|no (?:better|higher) than|ceiling)\s*(?:an?\s+|at\s+|of\s+)?(\d{2})\b/g,m=>{R.cap=+m[1];});
+  scan(/\b(\d{2})\s*(?:ceiling|max|cap)\b/g,m=>{R.cap=+m[1];});
+  scan(/\b(?:at least|floor(?: of| at| is)?|minimum(?: of)?|min(?:imum)?(?: potential)?(?: of)?|no worse than|never (?:drops?|falls?) below|won'?t (?:drop|fall) below)\s*(?:an?\s+)?(\d{2})\b/g,m=>{R.floor=+m[1];});
+  scan(/\b(\d{2})\s*floor\b/g,m=>{R.floor=+m[1];});
+  scan(/\b(?:starts? (?:at|as|out at)|starting (?:at|out at)|comes? in at|enters (?:the league )?at|rookie (?:rating|overall|ovr) (?:of |at )?)\s*(?:an?\s+)?(\d{2})\b/g,m=>{R.start=+m[1];});
+  // age / class
+  scan(/\b(1[7-9]|2[0-5])[\s-]*(?:years?|yrs?)[\s-]*old\b|\b(1[7-9]|2[0-5])\s*(?:yo|y\/o)\b|\bage[d]?\s+(1[7-9]|2[0-5])\b/g,m=>{R.age=+(m[1]||m[2]||m[3]);});
+  scan(/\b(freshman|one[- ]and[- ]done|sophomore|junior|senior|fifth[- ]year|super senior|older)\b/g,m=>{const w=m[1];R.age=/fresh|one/.test(w)?19:/soph/.test(w)?20:/junior/.test(w)?21:/fifth|super|older/.test(w)?23:22;});
+  // height
+  scan(/\b([5-7])\s*(?:'|ft\.?|foot|feet|-)\s*(\d{1,2})\s*(?:"|''|in\.?\b|inches\b)?(?!\d)/g,m=>{if(+m[2]>11)return false;R.ht=+m[1]*12+ +m[2];R.htSrc=m[0].trim();});
+  scan(/\b([5-7])\s*(?:'|ft\.?\b|foot\b|feet\b|footer\b)(?![\s-]*\d)/g,m=>{R.ht=+m[1]*12;R.htSrc=m[0].trim();});
+  scan(/\b(five|six|seven)[\s-]+(?:foot[\s-]+|feet[\s-]+)?(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven)\b(?![\s-]*(?:and|&)\s*d\b)/g,m=>{R.ht=NUMW[m[1]]*12+NUMW[m[2]];R.htSrc=m[0];});
+  scan(/\b(five|six|seven)[\s-]+(?:foot|feet|footer)\b/g,m=>{R.ht=NUMW[m[1]]*12;R.htSrc=m[0];});
+  // 3&D first (so "3" isn't read as a position)
+  scan(/\b(?:3|three)\s*(?:and|&|n|'n'|-and-|&amp;)\s*d\b|\b3&d\b|\b3-and-d\b|\b3nd\b/g,m=>{sk("three",Math.max(2,lvlAt(m.index)));sk("perD",2);R.hint=R.hint||"3&D Wing";});
+  // positions
+  const P=(re,ps,extra)=>scan(re,m=>{R.positions.push(...ps);if(extra)extra(m);});
+  P(/\bpoint[ -]forwards?\b/g,["SF","PF"],()=>{sk("pass",2);sk("handle",1);R.hint="Point Forward";});
+  P(/\bstretch[ -]?(?:4|four)s?\b/g,["PF"],m=>{sk("three",Math.max(2,lvlAt(m.index)));R.hint=R.hint||"Stretch Four";});
+  P(/\bstretch[ -]?(?:5|five|big)s?\b/g,["C","PF"],m=>{sk("three",Math.max(2,lvlAt(m.index)));R.hint=R.hint||"Stretch Four";});
+  P(/\bcombo guard\b/g,["PG","SG"]);
+  P(/\b(?:point guard|pg|lead guard|1[ -]guard|one[ -]guard)\b/g,["PG"]);
+  P(/\b(?:shooting guard|sg|2[ -]guard|two[ -]guard|off[ -]guard)\b/g,["SG"]);
+  P(/\b(?:small forward|sf|3[ -]man)\b/g,["SF"]);
+  P(/\b(?:power forward|pf|4[ -]man)\b/g,["PF"]);
+  P(/\b(?:center|centre|5[ -]man|big man)\b/g,["C"]);
+  P(/\bwings?\b/g,["SF","SG"]);
+  P(/\bforwards?\b/g,["SF"]);
+  P(/\bguards?\b/g,["SG"]);
+  P(/\b(?:the|a|an|play(?:s|ing)? the)\s+([1-5])\b(?![\s-]*(?:and\b|&|'|ft|foot|feet|\d))/g,[],m=>{R.positions.push(["PG","SG","SF","PF","C"][+m[1]-1]);});
+  // tier / fate
+  const T=(re,tier,fate,why)=>scan(re,m=>{if(tier)R.tier=tier;if(fate)R.fate=fate;if(tier)R.tierWhy=m[0];if(fate)R.fateWhy=m[0];});
+  T(/\b(?:generational(?:ly)?|once[- ]in[- ]a[- ](?:lifetime|generation)|unicorn|best prospect ever)\b/g,"gen","star");
+  T(/\b(?:surprise star|out of nowhere|nobody saw (?:it|him) coming|surprise)\b/g,"","surprise");
+  T(/\b(?:franchise(?:[- ]changer| player)?|superstar|super star|top pick|number one pick|no\.? ?1 pick|#1 pick|top[- ](?:3|three|5|five)(?: pick)?|cornerstone|future mvp|future all[- ]star|all[- ]star|star)\b/g,"3","star");
+  T(/\b(?:lottery|lotto)(?: pick)?\b/g,"10","");
+  T(/\b(?:mid[- ]first|mid[- ]1st|first[- ]round(?:er)?|1st[- ]round(?:er)?)\b/g,"18","");
+  T(/\b(?:late[- ]first|late[- ]1st)\b/g,"27","");
+  T(/\b(?:late[- ]second|late[- ]2nd)\b/g,"52","");
+  T(/\b(?:second[- ]round(?:er)?|2nd[- ]round(?:er)?|early[- ]second)\b/g,"38","");
+  T(/\b(?:undrafted|udfa)\b/g,"65","");
+  T(/\b(?:solid starter|starter|starting caliber|solid)\b/g,"18","");
+  T(/\b(?:role player|role guy|journeyman|bench guy|rotation (?:guy|player)|backup|role)\b/g,"","role");
+  T(/\b(?:glue guy)\b/g,"","role");
+  T(/\b(?:sleeper|steal|diamond in the rough|hidden gem|underrated|overlooked)\b/g,"","steal");
+  T(/\b(?:bust|looks great but|can'?t[- ]miss|overhyped|flame[- ]?out|all hype)\b/g,"","bust");
+  T(/\b(?:late bloomer|raw|project|developmental|work in progress|unpolished)\b/g,"","project");
+  if(/\bglue guy\b/.test(low)){sk("iq",2);sk("hustle",2);}
+  // weaknesses
+  const WM=[[/iq|bbiq|feel|decision/,"iq"],[/shot|jumper|jump shot|shoot|shooting|shooter|range|three/,"shoot"],[/free throw|ft/,"ft"],[/defen|guard anyone/,"defense"],[/handle|dribbl/,"handle"],[/pass|vision/,"pass"],[/finish|touch/,"finish"],[/rebound|boards/,"reb"],[/strength|strong|frame/,"size"],[/athlet|bounce|jump\b|speed|quick/,"athl"]];
+  const W=(w,m)=>{const hit=WM.find(([re])=>re.test(w));if(!hit)return false;R.weak[hit[1]]=true;};
+  scan(/\b(?:no|zero|can'?t|cannot|poor|bad|terrible|awful|weak|lacks?|limited|questionable|shaky|without|low|horrible|broken|suspect)\s+(?:an?\s+|any\s+|real\s+)?(basketball iq|bbiq|iq|feel(?: for the game)?|decision[- ]making|jump shot|jumper|shot|shooting|shooter|range|three[- ]point shot|free throws?|defen[cs]e|defender|handles?|dribble|dribbling|passing|passer|vision|finishing|touch|rebounding|strength|frame|athleticism|bounce|speed)\b/g,m=>W(m[1],m));
+  scan(/\b(?:can'?t|cannot|doesn'?t|does not|won'?t|unable to)\s+(shoot|defend|guard anyone|dribble|pass|finish|rebound|jump)\b/g,m=>W(m[1],m));
+  scan(/\b(?:low|no)[ -]iq\b/g,()=>{R.weak.iq=true;});
+  scan(/\b(?:unathletic|not athletic|non[- ]athletic)\b/g,()=>{R.weak.athl=true;});
+  scan(/\b(?:slow|plodding|heavy[- ]footed)\b/g,()=>{at("speed",1);R.ath.speed=1;});
+  scan(/\b(?:skinny|frail|weak frame|thin|wiry)\b/g,()=>{R.weak.size=true;});
+  // skills / archetype words
+  const K=(re,fn)=>scan(re,m=>fn(m,lvlAt(m.index)));
+  K(/\b(?:sharpshooter|sharp[- ]shooter|marksman|sniper|knockdown shooter|shooter|can (?:really |actually )?shoot|shoots? (?:it|the lights out)|lights[- ]out|deep range|splash)\b/g,(m,l)=>{sk("three",/really|lights|knockdown|sniper|sharp|marksman/.test(m[0])?3:Math.max(2,l));R.hint=R.hint||(/sharp|marksman|sniper/.test(m[0])?"Sharpshooter":"");});
+  K(/\b(?:slasher|slashing|attacks? the (?:rim|basket)|downhill|rim attacker|driver)\b/g,(m,l)=>{sk("finish",Math.max(2,l));at("accel",4);R.hint=R.hint||"Slashing Wing";});
+  K(/\b(?:athletic(?:ism)?|athlete|high[- ]flyer|high[- ]flying|explosive|freak(?: athlete)?|bouncy|springy|jumping jack)\b/g,(m,l)=>{const top=l===3||/freak|known/.test(low)||R.tier==="gen";at("speed",top?5:4);at("accel",top?5:4);at("vertical",5);at("lateral",top?5:4);if(/flyer|flying|jumping/.test(m[0]))sk("dunk",2);});
+  K(/\b(?:lockdown|lock[- ]down|stopper|perimeter defender|defensive stopper|pest|on[- ]ball defender|perimeter d)\b/g,(m,l)=>{sk("perD",/lock/.test(m[0])?3:Math.max(2,l));R.hint=R.hint||"Defensive Stopper";});
+  K(/\b(?:playmaker|play[- ]maker|floor general|facilitator|pass[- ]first|passer|distributor|court vision)\b/g,(m,l)=>{sk("pass",Math.max(2,l));if(!R.positions.length&&/floor general|pass[- ]first|distributor/.test(m[0]))R.positions.push("PG");R.hint=R.hint||"Floor General";});
+  K(/\b(?:rim protector|rim protection|shot[- ]blocker|shot blocking|protects the rim|blocks shots)\b/g,(m,l)=>{sk("rimp",Math.max(2,l===2?3:l));R.hint=R.hint||"Rim-Running Big";});
+  K(/\b(?:floor spacer|spacing big|pick[- ]and[- ]pop)\b/g,(m,l)=>{sk("three",2);});
+  K(/\b(?:post scorer|back to the basket|post game|low post|post moves|post player)\b/g,(m,l)=>{sk("post",Math.max(2,l===2?3:l));R.hint=R.hint||"Post Scorer Big";});
+  K(/\b(?:two[- ]way)\b/g,(m,l)=>{sk("perD",2);sk("mid",1);sk("three",Math.max(R.skills.three||0,1));R.hint=R.hint||"Two-Way Wing";});
+  K(/\b(?:shot creator|shot[- ]making|bucket[- ]getter|bucket|scorer|scoring|iso|isolation|creator)\b/g,(m,l)=>{sk("mid",Math.max(2,l));sk("handle",2);sk("three",Math.max(R.skills.three||0,1));R.hint=R.hint||"Shot Creator";});
+  K(/\b(?:rebounder|rebounding|board man|glass cleaner|crashes the glass|boards)\b/g,(m,l)=>{sk("reb",Math.max(2,l===2?3:l));});
+  K(/\b(?:handles|ball[- ]handler|ball[- ]handling|dribbler|shifty|crossover)\b/g,(m,l)=>{sk("handle",Math.max(2,l));});
+  K(/\b(?:finisher|finishing|touch around the rim|crafty)\b/g,(m,l)=>{sk("finish",Math.max(2,l));});
+  K(/\b(?:dunker|lob threat|rim runner|rim[- ]running|lob)\b/g,(m,l)=>{sk("dunk",Math.max(2,l));at("vertical",4);R.hint=R.hint||"Rim-Running Big";});
+  K(/\b(?:defender|defense|defence|defensive)\b/g,(m,l)=>{sk(R.positions.some(p=>p==="C"||p==="PF")?"intd":"perD",Math.max(2,l));});
+  K(/\b(?:high[- ]iq|smart|cerebral|savvy|basketball iq|iq|coach on the floor)\b/g,(m,l)=>{sk("iq",Math.max(2,l));});
+  K(/\b(?:motor|hustle|energy|effort|scrappy|gritty|tough)\b/g,(m,l)=>{sk("hustle",Math.max(2,l));});
+  K(/\b(?:strong|physical|bruiser|powerful|brute|bully)\b/g,(m,l)=>{at("strength",l===3?5:4);});
+  K(/\b(?:fast|quick|speedy|blur|lightning)\b/g,(m,l)=>{at("speed",l===3?5:4);at("accel",l===3?5:4);});
+  K(/\b(?:long|lengthy|long arms|huge wingspan|wingspan|length)\b/g,()=>{R.ws=6;});
+  K(/\b(?:mid[- ]range|midrange|pull[- ]up)\b/g,(m,l)=>{sk("mid",Math.max(2,l));});
+  // height hints (after positions so "small forward" is already consumed)
+  scan(/\b(?:tall|towering|huge|giant|oversized|big for (?:his|the) position)\b/g,()=>{R.htHint=2;});
+  scan(/\b(?:undersized|small|short|tiny|little|smaller)\b/g,()=>{R.htHint=-2;});
+  scan(/\b(?:known for|really|elite|incredible|great|best|special|world[- ]class|good|solid|decent)\b/g,()=>{});
+  // leftovers
+  const ignored=[];for(const m of low.matchAll(/[a-z0-9#&'.-]+/g)){const a=m.index,b=a+m[0].length;if(overlaps(a,b))continue;const w=m[0].replace(/^[-'.]+|[-'.,]+$/g,"");if(!w||QSTOP.has(w)||/^\d+$/.test(w)&&false)continue;if(w.length<2&&!/\d/.test(w))continue;ignored.push(w);}
+  R.ignored=[...new Set(ignored)];
+  return R;
+}
+function quickToInputs(R,seed){
+  const r=rngFor(seed,"quick");
+  let pos=R.positions[0]||"",pos2=R.positions.find(p=>p!==pos)||"";
+  if(!pos){ // infer from height or skills
+    if(R.ht)pos=R.ht<=75?"PG":R.ht<=78?"SG":R.ht<=81?"SF":R.ht<=83?"PF":"C";
+    else if(R.skills.rimp||R.skills.post||R.skills.reb||R.skills.intd)pos="C";
+    else if(R.skills.pass)pos="PG";else pos="SF";
+  }
+  let ht=R.ht,htSrc=R.htSrc?`“${R.htSrc}”`:"";
+  if(!ht){const [a,b]=POS_H[pos];ht=ri(r,a,b)+R.htHint;htSrc=R.htHint>0?"tall for "+pos:R.htHint<0?"undersized "+pos:"sampled for "+pos;}
+  else if(R.htHint&&!R.htSrc)ht+=R.htHint;
+  ht=clamp(ht,66,90);
+  let tier=R.tier,fate=R.fate;
+  if(fate==="steal"&&tier==="auto")tier="38";
+  if(fate==="project"&&(pos==="C"||pos==="PF")&&!R.hint)R.hint="Raw Project Big";
+  const I=Object.assign(defaultBuildInputs(),{first:R.first,last:R.last,ft:Math.floor(ht/12),inch:ht%12,ws:R.ws,pos,pos2,age:R.age,bg:R.bg,school:R.school,country:R.country,tier,fate,seed,
+    skills:{...R.skills},ath:{...R.ath},weak:{...R.weak},capMax:R.cap,capFloor:R.floor,capStart:R.start,archHint:R.hint||""});
+  return {inputs:I,htSrc};
+}
+
 /* ---------------- RENDER: build a player ---------------- */
 function inputsSummary(inp){if(!inp)return "";const sk=Object.entries(inp.skills||{}).filter(([,l])=>l).map(([k,l])=>`${SKILLS[k]?.label} ${LEVELS[l]}`);
   const at=ATH.filter(([k])=>+(inp.ath||{})[k]).map(([k,lab])=>`${lab.split(" (")[0]} ${ATH_LV[inp.ath[k]]}`);const wk=Object.entries(inp.weak||{}).filter(([,o])=>o).map(([k])=>WEAK[k]?.label);
@@ -818,7 +985,7 @@ function renderBuildForm(){
   sel("#b_age",[["auto","Auto"],...[18,19,20,21,22,23,24].map(n=>[n,n])]);
   sel("#b_bg",[["College","College"],["International","International"],["G League","G League / pro path"],["Other","Other"]]);
   sel("#b_tier",TIER_OPTS);sel("#b_fate",FATE_OPTS);
-  ["#b_first","#b_last","#b_wt","#b_school","#b_country","#b_seed","#b_text"].forEach(id=>{const el=$(id);if(document.activeElement!==el)el.value=I[el.dataset.bi]??"";});
+  ["#b_first","#b_last","#b_wt","#b_school","#b_country","#b_seed","#b_text","#b_capMax","#b_capFloor","#b_capStart"].forEach(id=>{const el=$(id);if(document.activeElement!==el)el.value=I[el.dataset.bi]??"";});
   $("#b_skills").innerHTML=Object.entries(SKILLS).map(([k,s])=>{const l=+I.skills[k]||0;return `<button class="chip ${l?"on":""}" data-skill="${k}">${esc(s.label)}${l?` · <b>${LEVELS[l]}</b>`:""}</button>`;}).join("");
   $("#b_weak").innerHTML=Object.entries(WEAK).map(([k,w])=>`<button class="chip ${I.weak[k]?"on wk":""}" data-weak="${k}">${I.weak[k]?"✗ ":""}${esc(w.label)}</button>`).join("");
   $("#b_ath").innerHTML=ATH.map(([k,lab])=>{const l=+I.ath[k]||0;return `<label class="f">${esc(lab)}: <b id="b_athv_${k}">${ATH_LV[l]}</b></label><input type="range" min="0" max="5" step="1" value="${l}" data-ath="${k}">`;}).join("")+
@@ -842,7 +1009,7 @@ function renderBuildOut(){
    <div class="sec">Badges (height-filtered; requirements unverified)</div><div>${p.badges.map(b=>`<span class="tb ${b.tier.replace(/ /g,"")}">${esc(b.name)} · ${esc(b.tier)}</span>`).join("")}</div>
    <div class="sec">Key tendencies</div><div>${Object.entries(p.tend).map(([k,v])=>`<span class="tag">${esc(k)} ${v}</span>`).join("")}</div>
    <div class="sec">Appearance &amp; style</div><div class="info">${p.notes.map(esc).join(" · ")}</div>
-   <div class="sec">Why: what your inputs changed</div>`+
+   <div class="sec">Why: what your inputs changed</div>`+(p.capLines&&p.capLines.length?`<div class="why"><b>Caps</b> <span class="info">${p.capLines.map(esc).join("; ")}</span></div>`:"")+
    (p.why.length?p.why.map(w=>`<div class="why"><b>${esc(RNAME[w.k])} ${w.v}</b> <span class="info">← template ${w.base}: ${w.lines.map(esc).join("; ")}</span></div>`).join(""):`<div class="info">No inputs changed ratings; this is the pure ${esc(p.arch)} template.</div>`)+
    `<div class="note">House rules, not 2K's formula: archetype template + skill bumps (floors Good 75 / Great 82 / Elite 89, shifted by tier; ceilings 84 / 91 / 97) + athletic targets (Low 55, Below 65, Avg 74, High 83, Elite 92) + weaknesses (−12). 2K27 has no Acceleration or Lateral Quickness rating, so they map to Agility, Speed with Ball, and Perimeter Defense.</div></div>`;
   const cls=Object.values(S.classes).filter(c=>c.kind!=="singles").sort((a,b)=>b.created-a.created);
@@ -859,7 +1026,36 @@ function runBuild(rrDelta){
   const B=S.build;if(rrDelta)B.rr=(B.rr||0)+1;
   B.result=buildSingle(B.inputs,B.rr,B.lockedR);save();renderBuildOut();
 }
-function renderBuild(){renderBuildForm();renderBuildOut();}
+const Q_EXAMPLES=["I want a generationally talented Small Forward who's 6'9 and known for his athleticism","I need a 3 and D 2 guard who never gets better than an 83 rating","raw 7 foot project center from Senegal","second round steal point guard who can really shoot","bust: athletic 6'8 PF with no IQ","role player stretch 4 capped at 78"];
+function renderQuick(){
+  const Q=S.build.quick,el=$("#q_under");
+  if(document.activeElement!==$("#q_text"))$("#q_text").value=Q?.text||"";
+  if(!Q||!S.build.result){el.innerHTML="";return;}
+  const I=S.build.inputs,ht=(+I.ft)*12+(+I.inch);
+  const hts=[];for(let h=66;h<=90;h++)hts.push([h,ftIn(h)]);
+  const sk=Object.entries(I.skills||{}).filter(([,l])=>l),at=ATH.filter(([k])=>+(I.ath||{})[k]),wk=Object.keys(I.weak||{}).filter(k=>I.weak[k]);
+  el.innerHTML=`<div class="sec">What I understood <span class="info" style="text-transform:none;letter-spacing:0">(change anything; it rebuilds)</span></div>
+   <div class="qrow"><span>Position</span><div class="grid2"><select data-qi="pos">${opt(POSS.map(x=>[x,x]),I.pos)}</select><select data-qi="pos2">${opt([["","No 2nd"],...POSS.map(x=>[x,x])],I.pos2)}</select></div></div>
+   <div class="qrow"><span>Height<br><i class="qsrc">${esc(Q.htSrc||"")}</i></span><select data-qi="ht">${opt(hts,ht)}</select></div>
+   <div class="qrow"><span>Talent / tier${Q.src?.tier?`<br><i class="qsrc">“${esc(Q.src.tier)}”</i>`:""}</span><select data-qi="tier">${opt(TIER_OPTS,I.tier)}</select></div>
+   <div class="qrow"><span>Fate${Q.src?.fate?`<br><i class="qsrc">“${esc(Q.src.fate)}”</i>`:""}</span><select data-qi="fate">${opt(FATE_OPTS,I.fate)}</select></div>
+   <div class="qrow"><span>Caps</span><div class="grid3"><input type="number" inputmode="numeric" data-qi="capMax" placeholder="Max" value="${esc(I.capMax)}" aria-label="Max potential cap"><input type="number" inputmode="numeric" data-qi="capFloor" placeholder="Floor" value="${esc(I.capFloor)}" aria-label="Min potential floor"><input type="number" inputmode="numeric" data-qi="capStart" placeholder="Start" value="${esc(I.capStart)}" aria-label="Starting OVR"></div></div>
+   <div class="qrow"><span>Skills</span><div class="chips">${sk.length?sk.map(([k,l])=>`<button class="chip on" data-qskill="${k}">${esc(SKILLS[k].label)} · <b>${LEVELS[l]}</b></button>`).join(""):`<span class="info">none (template only)</span>`}</div></div>
+   <div class="qrow"><span>Athletic</span><div class="chips">${at.length?at.map(([k,lab])=>`<button class="chip on" data-qath="${k}">${esc(lab.split(" (")[0])} · <b>${ATH_LV[I.ath[k]]}</b></button>`).join(""):`<span class="info">auto</span>`}</div></div>
+   ${wk.length?`<div class="qrow"><span>Weak</span><div class="chips">${wk.map(k=>`<button class="chip on wk" data-qweak="${k}">✗ ${esc(WEAK[k].label)}</button>`).join("")}</div></div>`:""}
+   <div class="qrow"><span>Other</span><div class="info">${[I.archHint?"Archetype word: "+I.archHint:"",I.bg!=="College"?I.bg:"",I.school?esc(I.school):"",I.country&&I.country!=="USA"?esc(I.country):"",I.age!=="auto"?"Age "+I.age:"",I.first?esc(I.first+" "+I.last):""].filter(Boolean).join(" · ")||"—"}</div></div>
+   <div class="qrow"><span>Ignored</span><div class="chips">${Q.ignored&&Q.ignored.length?Q.ignored.map(w=>`<span class="chip ig">${esc(w)}</span>`).join(""):`<span class="info">nothing, I read every word</span>`}</div></div>
+   <div class="info">Tap a skill or athletic chip to change its level; tap a weakness to remove it.</div>
+   <div class="grid2" style="margin-top:8px"><button id="q_reroll">🎲 Re-roll</button><button id="q_full">✏️ Open in full Build</button></div>`;
+}
+function quickGenerate(text){
+  const seed=randSeed(),R=quickParse(text,seed),{inputs,htSrc}=quickToInputs(R,seed);
+  S.build.inputs=inputs;S.build.rr=0;S.build.lockedR={};S.build.parsed=null;
+  S.build.quick={text,htSrc,ignored:R.ignored,src:{tier:R.tierWhy,fate:R.fateWhy}};
+  S.build.result=buildSingle(inputs,0,{});save();
+  $("#b_full").open=false;renderBuildForm();renderQuick();renderBuildOut();
+}
+function renderBuild(){renderQuick();renderBuildForm();renderBuildOut();}
 
 /* ---------------- RENDER: setup ---------------- */
 function renderClassSel(){
@@ -997,6 +1193,21 @@ $("#impFile").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(
 $("#impPaste").onclick=()=>{if(importJson($("#impText").value))$("#impText").value="";};
 $("#delClass").onclick=()=>{if(!confirm("Delete this class?"))return;delete S.classes[S.current];normalize();S.current=Object.keys(S.classes)[0];save();renderAll();toast("Deleted");};
 document.querySelectorAll("[data-bi]").forEach(el=>{const ev=el.tagName==="SELECT"?"change":"input";el.addEventListener(ev,()=>{const k=el.dataset.bi;let v=el.value;if(k==="ft"||k==="inch")v=+v;S.build.inputs[k]=v;save();});});
+$("#q_go").onclick=()=>{const t=$("#q_text").value.trim();if(!t)return toast("Type a sentence first");quickGenerate(t);toast("Built from your sentence ⚡");const u=$("#q_under");if(u)u.scrollIntoView({block:"start"});window.scrollBy(0,-130);};
+$("#q_ex").onclick=()=>{const i=((S.build.qex||0)+1)%Q_EXAMPLES.length;S.build.qex=i;$("#q_text").value=Q_EXAMPLES[i];};
+$("#q_text").oninput=e=>{if(S.build.quick)S.build.quick.text=e.target.value;};
+$("#q_under").onchange=e=>{const el=e.target.closest("[data-qi]");if(!el)return;const I=S.build.inputs,k=el.dataset.qi;
+  if(k==="ht"){I.ft=Math.floor(+el.value/12);I.inch=+el.value%12;S.build.quick.htSrc="you set it";}else I[k]=el.value;
+  if(k==="tier"&&S.build.quick.src)S.build.quick.src.tier="";if(k==="fate"&&S.build.quick.src)S.build.quick.src.fate="";
+  runBuild(0);renderQuick();renderBuildForm();};
+$("#q_under").onclick=e=>{const I=S.build.inputs;let b;
+  if((b=e.target.closest("[data-qskill]"))){const k=b.dataset.qskill;I.skills[k]=((+I.skills[k]||0)+1)%4;if(!I.skills[k])delete I.skills[k];}
+  else if((b=e.target.closest("[data-qath]"))){const k=b.dataset.qath;I.ath[k]=(+I.ath[k]||0)+1;if(I.ath[k]>5)delete I.ath[k];}
+  else if((b=e.target.closest("[data-qweak]"))){delete I.weak[b.dataset.qweak];}
+  else if(e.target.closest("#q_reroll")){runBuild(1);renderQuick();toast("Re-rolled (your sentence's intent kept)");return;}
+  else if(e.target.closest("#q_full")){$("#b_full").open=true;renderBuildForm();$("#b_full").scrollIntoView({block:"start"});window.scrollBy(0,-130);return;}
+  else return;
+  runBuild(0);renderQuick();renderBuildForm();};
 $("#b_newSeed").onclick=()=>{S.build.inputs.seed=randSeed();S.build.rr=0;save();renderBuildForm();};
 $("#b_skills").onclick=e=>{const b=e.target.closest("[data-skill]");if(!b)return;const I=S.build.inputs,k=b.dataset.skill;I.skills[k]=((+I.skills[k]||0)+1)%4;if(!I.skills[k])delete I.skills[k];save();renderBuildForm();};
 $("#b_weak").onclick=e=>{const b=e.target.closest("[data-weak]");if(!b)return;const I=S.build.inputs,k=b.dataset.weak;if(I.weak[k])delete I.weak[k];else I.weak[k]=true;save();renderBuildForm();};
@@ -1011,7 +1222,7 @@ $("#b_out").onclick=e=>{const B=S.build,p=B.result;if(!p)return;
   if(e.target.closest("#b_save")){const c=singlesClass(true);addToClass(c,p,p.pick);save();renderClassSel();toast("Saved to ★ Standalone builds");return;}
   if(e.target.closest("#b_add")){const c=S.classes[$("#b_cls").value];if(!c)return;const q=addToClass(c,p,+$("#b_pick").value||p.pick);S.current=c.id;cardIdx=0;save();renderClassSel();toast(`Added to ${className(c)} at #${q.pick}`);renderBuildOut();return;}
 };
-window.__CF={get state(){return S;},forge,rerollOne,buildCsv,cur,buildSingle,parseBackstory,addToClass,pickArchetype};
+window.__CF={get state(){return S;},forge,rerollOne,buildCsv,cur,buildSingle,parseBackstory,addToClass,pickArchetype,quickParse,quickToInputs};
 renderAll();
 </script>
 </body>
