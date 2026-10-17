@@ -39,8 +39,8 @@ label.f{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
 input[type=range]{width:100%;accent-color:var(--acc);height:34px}
 .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);background:#120f1a;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-nav.tabs button{border:0;border-radius:0;background:transparent;min-height:64px;font-size:11px;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:repeat(6,1fr);background:#120f1a;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs button{border:0;border-radius:0;background:transparent;min-height:64px;font-size:10.5px;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px}
 nav.tabs button b{font-size:20px}
 nav.tabs button.on{color:var(--acc)}
 .view{display:none}.view.on{display:block}
@@ -65,6 +65,13 @@ nav.tabs button.on{color:var(--acc)}
 .prog{height:10px;border-radius:6px;background:var(--panel2);overflow:hidden;margin:8px 0}
 .prog i{display:block;height:100%;background:var(--acc);width:0}
 .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--acc);color:#2a1100;padding:10px 16px;border-radius:12px;font-weight:700;z-index:99;display:none;max-width:90vw;text-align:center}
+.rgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
+.rt{display:flex;justify-content:space-between;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:44px;font-size:13px;cursor:pointer}
+.rt span{min-width:0;overflow-wrap:anywhere;color:var(--mut)}.rt b{font-size:17px;white-space:nowrap}.rt.mv span{color:var(--txt)}.rt.lk{border-color:var(--acc2)}
+.rt i{font-style:normal;font-size:11px;margin-left:3px}.rt i.up{color:var(--good)}.rt i.dn{color:var(--bad)}
+.why{padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.chip.wk{border-color:var(--bad);background:#3a0f14;color:#ff9aa4}
+.tick{display:flex;justify-content:space-between;font-size:10px;color:var(--mut);margin-top:-4px}
 .empty{color:var(--mut);text-align:center;padding:24px 8px}
 .sum{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 ol.how li{margin:6px 0}
@@ -109,12 +116,45 @@ ol.how li{margin:6px 0}
     <label class="f">International share: <b id="s_iv"></b>%</label><input type="range" id="s_i" min="0" max="60" step="5">
     <label class="f">Older prospects (seniors, 22–23): <b id="s_ov"></b>%</label><input type="range" id="s_o" min="0" max="60" step="5">
   </div>
+  <div class="note" id="s_singlesNote" style="display:none">This is your ★ Standalone builds list (made in 🛠️ Build). Forging is off here. Pick or create a draft class to forge.</div>
   <button class="pri" id="forgeBtn" style="width:100%">⚒️ Forge class</button>
   <div class="grid2" style="margin-top:8px">
     <button id="rerollAll">🎲 Re-roll all (new seed)</button>
     <button id="toBoard">View board →</button>
   </div>
   <div class="note">All numbers are house rules, not 2K's formula. 2K calculates the real overall; these are targets. Locked prospects (🔒) are kept when you forge or re-roll.</div>
+</section>
+
+<!-- BUILD A PLAYER -->
+<section id="v-build" class="view">
+  <div class="note">Build one player from a backstory. Fill in what you know; everything else is auto. House rules, not 2K's formula.</div>
+  <div class="card">
+    <div class="sec" style="margin-top:0">Basics</div>
+    <div class="grid2"><div><label class="f">First name (blank = auto)</label><input type="text" id="b_first" data-bi="first" autocomplete="off"></div><div><label class="f">Last name</label><input type="text" id="b_last" data-bi="last" autocomplete="off"></div></div>
+    <label class="f">Height</label><div class="grid2"><select id="b_ft" data-bi="ft"></select><select id="b_in" data-bi="inch"></select></div>
+    <div class="grid2"><div><label class="f">Weight lb (blank = auto)</label><input type="number" inputmode="numeric" id="b_wt" data-bi="wt"></div><div><label class="f">Wingspan (cap +6)</label><select id="b_ws" data-bi="ws"></select></div></div>
+    <div class="grid2"><div><label class="f">Position</label><select id="b_pos" data-bi="pos"></select></div><div><label class="f">Secondary</label><select id="b_pos2" data-bi="pos2"></select></div></div>
+    <div class="grid2"><div><label class="f">Age</label><select id="b_age" data-bi="age"></select></div><div><label class="f">Background</label><select id="b_bg" data-bi="bg"></select></div></div>
+    <div class="grid2"><div><label class="f">College / club</label><input type="text" id="b_school" data-bi="school" placeholder="e.g. Oregon State University"></div><div><label class="f">Country</label><input type="text" id="b_country" data-bi="country"></div></div>
+    <div class="grid2"><div><label class="f">Projected pick / tier</label><select id="b_tier" data-bi="tier"></select></div><div><label class="f">Fate (optional)</label><select id="b_fate" data-bi="fate"></select></div></div>
+    <label class="f">Seed</label><div class="row"><input type="text" id="b_seed" data-bi="seed" class="grow" autocomplete="off"><button id="b_newSeed" style="min-width:48px;padding:0" aria-label="New seed">🎲</button></div>
+  </div>
+  <div class="card">
+    <div class="sec" style="margin-top:0">Describe him (optional)</div>
+    <textarea id="b_text" data-bi="text" placeholder="harassing defense, elite ball handling, low end speed, high end strength, elite lateral quickness, can't shoot"></textarea>
+    <button id="b_parse" style="width:100%;margin-top:8px">🔎 Read my description → chips</button>
+    <div id="b_parsed"></div>
+    <div class="sec">Standout skills <span class="info" style="text-transform:none;letter-spacing:0">(tap: Good → Great → Elite → off)</span></div>
+    <div class="chips" id="b_skills"></div>
+  </div>
+  <div class="card">
+    <div class="sec" style="margin-top:0">Athletic chops</div>
+    <div class="info">2K27 has no separate Acceleration or Lateral Quickness rating. Acceleration maps to Agility and Speed with Ball; lateral quickness maps to Agility (plus a bit of Perimeter D).</div>
+    <div id="b_ath"></div>
+  </div>
+  <div class="card"><div class="sec" style="margin-top:0">Weaknesses (optional)</div><div class="chips" id="b_weak"></div></div>
+  <div class="grid2"><button class="pri" id="b_go">🛠️ Build player</button><button class="ghost" id="b_resetForm">Clear form</button></div>
+  <div id="b_out"></div>
 </section>
 
 <!-- BOARD -->
@@ -165,6 +205,15 @@ ol.how li{margin:6px 0}
     <div class="info">Sources: a 2K26 draft-class guide (Magic Game World) and the 2K26 MyNBA load path (Yahoo/Yardbarker). I'm assuming 2K27 uses the same menus ⚠️ (not yet verified on 2K27).</div>
   </div>
   <div class="card">
+    <div class="sec" style="margin-top:0">🛠️ Build a Player</div>
+    <ol class="how">
+      <li>Fill in height, position, school, and anything else you know. Blank fields are auto.</li>
+      <li>Type a backstory ("harassing defense, ball handling, low end speed…") and tap <b>Read my description</b>. Check the parsed chips and tap to fix them. You can also set skill levels, athletic sliders, and weaknesses directly.</li>
+      <li><b>Build player</b>. The <b>Why</b> list shows which inputs moved which ratings. Tap a rating to 🔒 lock it, then 🎲 re-roll the rest.</li>
+      <li><b>Add to class</b> at a pick (with Fill 1–N on, everyone from that pick down slides back one), or <b>Save standalone</b> to the ★ Standalone builds list. Card mode, JSON, and CSV all include him.</li>
+    </ol>
+  </div>
+  <div class="card">
     <div class="sec" style="margin-top:0">⚠️ Notes &amp; limits</div>
     <ul class="info" style="padding-left:18px">
       <li><b>Wingspan:</b> a 2K27 class maker reports Create-a-Player can't show wingspans above about <b>+6"</b>. Builds here are capped at +6 ⚠️.</li>
@@ -181,6 +230,7 @@ ol.how li{margin:6px 0}
 
 <nav class="tabs">
   <button data-v="setup" class="on"><b>⚒️</b>Setup</button>
+  <button data-v="build"><b>🛠️</b>Build</button>
   <button data-v="board"><b>📋</b>Board</button>
   <button data-v="card"><b>✅</b>Card</button>
   <button data-v="data"><b>💾</b>Data</button>
@@ -292,6 +342,11 @@ const ARCHETYPES = {
   badges:["Post Powerhouse","Hook Specialist","Post Spin Catalyst","Post Fade Phenom","Paint Prodigy","Physical Finisher","Boxout Boss","Brick Wall","Post Lockdown","Bruiser"],
   tend:{"Shot":60,"Touches":60,"Shot Three":5,"Drive":15,"Post Up":80,"Dish to Open Man":35,"Foul":45,"Roll vs Pop":70,"Block Shot":45},
   style:["Old-school footwork, soft hook","Wide body, seals deep"]},
+ "Two-Way Guard":{grp:"G",singleOnly:true,pos:["PG","SG"],pos2:["SG","PG"],h:[72,77],w:[185,210],ws:[1,6],dev:5,peak:"athletic",
+  prof:{PD:3,STEAL:2,PSPER:2,BALL:2,SPDB:1,AGIL:2,HELPDIQ:1,DCNST:1,PASS:1,LAYUP:1,STR:1,HSTL:1,STDUNK:-3,PHOOK:-3,POSTC:-3,PFADE:-2,ID:-2,BLOCK:-2,OREB:-2},
+  badges:["Glove","Challenger","Interceptor","Off-Ball Pest","Pick Dodger","Ankle Braces","Strong Handle","Unpluckable","Handles For Days","Ankle Assassin","Bruiser","Work Horse"],
+  tend:{"Shot":50,"Touches":60,"Shot Three":45,"Drive":55,"Post Up":3,"Dish to Open Man":65,"Foul":45,"On-Ball Steal":75},
+  style:["Picks up full court, lives in the passing lanes","Tight, low handle; bulldog body"]},
  "Raw Project Big":{grp:"B",pos:["C"],pos2:["PF"],h:[83,87],w:[225,255],ws:[3,6],dev:5,peak:"athletic",
   prof:{BLOCK:2,VERT:3,STDUNK:2,OREB:1,DREB:1,ID:1,STR:-1,HANDS:-1,SHOTIQ:-2,OCNST:-2,PASSIQ:-2,PASS:-2,VISION:-3,BALL:-3,"3PT":-2,MID:-2,FT:-3,POSTC:-2,PHOOK:-1,PFADE:-2,HELPDIQ:-1,DCNST:-2},
   badges:["Paint Patroller","High-Flying Denier","Pogo Stick","Sync Snatcher","Rise Up","Crasher","Wall Up","Work Horse"],
@@ -376,21 +431,23 @@ const letter=p=>p>=95?"A+":p>=90?"A":p>=85?"A-":p>=80?"B+":p>=75?"B":p>=70?"B-":
 
 function defaultSettings(){return {year:new Date().getFullYear()+2,shape:"top",top:0,dep:0,counts:{star:2,surprise:1,role:5,bust:3,steal:1,project:0},total:12,fill:true,mix:{G:50,W:50,B:50},intl:20,older:15};}
 function newClass(settings){const st=settings||defaultSettings();return {id:uid(),settings:st,seed:randSeed(),prospects:[],checks:{},created:Date.now()};}
-function defaultState(){const c=newClass();return {app:"class-forge",version:2,current:c.id,showFates:false,classes:{[c.id]:c}};}
+function defaultState(){const c=newClass();return {app:"class-forge",version:3,build:null,current:c.id,showFates:false,classes:{[c.id]:c}};}
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))||defaultState();}catch(e){S=defaultState();}
 function normalize(){
-  if(S&&S.app==="class-forge")S.version=2; // v2 adds settings.fill (defaults ON); saved prospects/picks untouched
+  if(S&&S.app==="class-forge")S.version=3; // v2: settings.fill (ON). v3: Build-a-Player (S.build, standalone class). Saved prospects untouched
   if(!S.classes||!Object.keys(S.classes).length)S=defaultState();
   Object.values(S.classes).forEach(c=>{c.settings=Object.assign(defaultSettings(),c.settings||{});c.settings.counts=Object.assign(defaultSettings().counts,c.settings.counts||{});c.settings.mix=Object.assign({G:50,W:50,B:50},c.settings.mix||{});c.prospects=c.prospects||[];c.checks=c.checks||{};c.seed=c.seed||randSeed();});
   if(!S.classes[S.current])S.current=Object.keys(S.classes)[0];
+  if(!S.build||!S.build.inputs)S.build=defaultBuild();
+  S.build.inputs=Object.assign(defaultBuildInputs(),S.build.inputs);S.build.lockedR=S.build.lockedR||{};S.build.rr=S.build.rr||0;
 }
 normalize();
 let cardIdx=0;
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
 const cur=()=>S.classes[S.current];
 function toast(m){const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(toast._t);toast._t=setTimeout(()=>t.style.display="none",1800);}
-const className=c=>`${c.settings.year} class · ${SHAPES[c.settings.shape]?.label||""}`;
+const className=c=>c.kind==="singles"?"★ Standalone builds":`${c.settings.year} class · ${SHAPES[c.settings.shape]?.label||""}`;
 
 /* ---------------- GENERATION ---------------- */
 function rolesFor(st){
@@ -421,6 +478,7 @@ function chooseArch(r,fate,st){
   if(fate==="project")return "Raw Project Big";
   const w=[];
   for(const [name,a] of Object.entries(ARCHETYPES)){
+    if(a.singleOnly)continue;
     if(name==="Raw Project Big"&&fate!=="prospect")continue;
     let wt=(+st.mix[a.grp]||0)/100+0.001;
     if(name==="Raw Project Big")wt*=0.3;
@@ -518,8 +576,10 @@ function body(p,r,st){
   return Object.assign(p,{tier:tier.label,ovr,pot,potL:letter(pot),minPot,maxPot,boom,bust,ratings,badges,tend,peakStart,peakEnd,notes});
 }
 function forge(cls,keepIds){
+  if(cls.kind==="singles")return cls;
   const st=cls.settings,roles=rolesFor(st);st.total=roles.length;
-  const old={};cls.prospects.forEach(p=>old[p.slot]=p);
+  const customs=cls.prospects.filter(p=>p.single);
+  const old={};cls.prospects.forEach(p=>{if(!p.single)old[p.slot]=p;});
   let genSlot=-1;
   if(st.shape==="gen"&&!cls.prospects.some(p=>p.locked&&p.gen)){
     genSlot=roles.findIndex((f,i)=>f==="star"&&!(old[i]&&old[i].locked));
@@ -534,7 +594,7 @@ function forge(cls,keepIds){
     work.push({p,r});
   });
   // unique picks: kept first, then by desired
-  const used=new Set(work.filter(w=>w.keep).map(w=>w.keep.pick));
+  const used=new Set(work.filter(w=>w.keep).map(w=>w.keep.pick).concat(customs.map(p=>p.pick)));
   const fresh=work.filter(w=>w.p).sort((a,b)=>a.p.desired-b.p.desired||a.p.slot-b.p.slot);
   if(st.fill){ // contiguous: fresh prospects take the free picks 1..N in order of their fate band
     const free=[];for(let i=1;free.length<fresh.length;i++)if(!used.has(i))free.push(i);
@@ -558,18 +618,248 @@ function forge(cls,keepIds){
     used.add(pk);w.p.pick=pk;delete w.p.desired;
   });
   work.forEach(w=>{if(w.p)body(w.p,w.r,st);});
-  const ids=new Set(work.map(w=>(w.keep||w.p).id));
+  const ids=new Set(work.map(w=>(w.keep||w.p).id).concat(customs.map(p=>p.id)));
   Object.keys(cls.checks).forEach(k=>{if(!ids.has(k))delete cls.checks[k];});
-  cls.prospects=work.map(w=>w.keep||w.p);
+  cls.prospects=work.map(w=>w.keep||w.p).concat(customs);
   return cls;
 }
 function rerollOne(cls,id){
   const p=cls.prospects.find(x=>x.id===id);if(!p)return;
   if(p.locked){toast("Unlock first 🔒");return;}
+  if(p.single){const np=buildSingle(p.inputs,(p.rr||0)+1,p.lockedR);Object.assign(np,{slot:p.slot,pick:p.pick});delete cls.checks[p.id];cls.prospects[cls.prospects.indexOf(p)]=np;return;}
   const keep=new Set(cls.prospects.filter(x=>x.id!==id).map(x=>x.id));
   const oldId=p.id;p.rr=(p.rr||0)+1;
   forge(cls,keep);delete cls.checks[oldId];
 }
+
+/* ===================== BUILD A PLAYER (single backstory) ===================== */
+// HOUSE RULES. Skill chips -> 2K27 ratings with weights. Level boosts: Good +6 / Great +11 / Elite +16 (x weight);
+// Skill bumps are modest on top of the archetype template: +35% of (Good 6 / Great 11 / Elite 16) x weight,
+// then floors for main ratings (weight >= .9): Good 75 / Great 82 / Elite 89 (weight .7-.9: floor -6), shifted by (target OVR - 70)/2,
+// and ceilings for skill-raised ratings: Good 84 / Great 91 / Elite 97 (rookie realism).
+const SKILLS = {
+ perD:{label:"Perimeter D / harassing",r:{PD:1,STEAL:.9,PSPER:.7,AGIL:.4,DCNST:.5,HELPDIQ:.3},kw:["harass","harness","pesky","lockdown","lock down","perimeter d","on-ball","on ball","stopper","hound","steal","ball hawk","pickpocket","defender","defense","defence"]},
+ handle:{label:"Ball handling",r:{BALL:1,SPDB:.7},kw:["handl","dribbl","handles","crossover","shifty"]},
+ three:{label:"3PT shooting",r:{"3PT":1,FT:.5,OCNST:.3,SHOTIQ:.3},kw:["shooter","shooting","three","3pt","3-point","3 point","deep range","sniper","splash","range"]},
+ mid:{label:"Mid-range",r:{MID:1,FT:.4,SHOTIQ:.4},kw:["mid-range","midrange","mid range","pull-up","pull up","middy","jumper"]},
+ finish:{label:"Finishing",r:{LAYUP:1,CLOSE:.8,FOUL:.5},kw:["finish","layup","slash","attack the rim","touch","craft"]},
+ dunk:{label:"Dunking",r:{DUNK:1,STDUNK:.8,VERT:.3},kw:["dunk","poster","above the rim","lob"]},
+ post:{label:"Post game",r:{POSTC:1,PHOOK:.9,PFADE:.7},kw:["post","back to the basket","hook","footwork"]},
+ pass:{label:"Playmaking / passing",r:{PASS:1,VISION:1,PASSIQ:.9},kw:["pass","playmak","vision","dime","facilitat","floor general","court vision"]},
+ reb:{label:"Rebounding",r:{DREB:1,OREB:.9},kw:["rebound","boards","glass","crash"]},
+ rimp:{label:"Rim protection",r:{BLOCK:1,ID:.5,HELPDIQ:.4,VERT:.2},kw:["rim protect","block","swat","shot-block","shot block","rim protector"]},
+ intd:{label:"Interior D",r:{ID:1,STR:.4,DREB:.3},kw:["interior d","post defense","post d","paint defen","anchor"]},
+ hustle:{label:"Hustle / motor",r:{HSTL:1,STAM:.5,OREB:.3},kw:["hustle","motor","effort","energy","dive","scrappy","grit"]},
+ iq:{label:"Basketball IQ",r:{SHOTIQ:.8,PASSIQ:.8,HELPDIQ:.8,OCNST:.5,DCNST:.5,INTNGBL:.6},kw:[" iq","smart","cerebral","savvy","high iq","feel for the game","coach on the floor"]}
+};
+const LEVELS=["Off","Good","Great","Elite"],LV_BOOST=[0,6,11,16],LV_FLOOR=[0,75,82,89],LV_CEIL=[99,84,91,97];
+// Athletic chops. 2K27 has NO separate Acceleration or Lateral Quickness rating (36-rating list) -> mapped to closest verified ratings.
+const ATH = [
+ ["speed","Speed",{SPEED:1,SPDB:.5},["speed","fast","slow","foot speed","end-to-end"]],
+ ["accel","Acceleration (→ Agility, Speed w/ Ball)",{AGIL:.6,SPDB:.4,SPEED:.2},["accel","first step","burst","explosive first"]],
+ ["strength","Strength",{STR:1},["strength","strong","physical","bulky","weak frame"]],
+ ["vertical","Vertical",{VERT:1},["vertical","bounce","leap","hops","jump","athletic"]],
+ ["stamina","Stamina",{STAM:1},["stamina","conditioning","endurance","gas tank"]],
+ ["lateral","Lateral quickness (→ Agility, Perimeter D)",{AGIL:.8,PD:.25},["lateral","slide","quick feet","side to side"]]
+];
+const ATH_LV=["Auto","Low end","Below avg","Average","High end","Elite"],ATH_TGT=[0,55,65,74,83,92];
+const WEAK = {
+ shoot:{label:"Shooting",r:{"3PT":1,MID:.8,FT:.6},kw:["shoot","shooter","jumper","three","range"]},
+ ft:{label:"Free throws",r:{FT:1},kw:["free throw","foul shot"," ft"]},
+ finish:{label:"Finishing",r:{LAYUP:1,CLOSE:.8,DUNK:.5},kw:["finish","layup","around the rim"]},
+ handle:{label:"Ball handling",r:{BALL:1,SPDB:.7},kw:["handl","dribbl","turnover"]},
+ pass:{label:"Passing",r:{PASS:1,VISION:.8,PASSIQ:.6},kw:["pass","vision","playmak"]},
+ defense:{label:"Defense",r:{PD:.8,ID:.8,HELPDIQ:.7,DCNST:.7},kw:["defen","defence"]},
+ reb:{label:"Rebounding",r:{DREB:1,OREB:.8},kw:["rebound","boards"]},
+ size:{label:"Strength / frame",r:{STR:1,ID:.4},kw:["strength","frame","thin","skinny","weak"]},
+ athl:{label:"Athleticism",r:{VERT:.9,SPEED:.7,AGIL:.7},kw:["athlet","bounce","slow","explosive"]},
+ iq:{label:"Decision making / IQ",r:{SHOTIQ:.8,PASSIQ:.8,HELPDIQ:.6,OCNST:.5},kw:["decision","iq","forc","shot selection"]}
+};
+const TIER_OPTS=[["auto","Auto (from inputs)"],["gen","Generational #1"],["3","Top 5 (~#3)"],["10","Lottery (~#10)"],["18","Mid 1st (~#18)"],["27","Late 1st (~#27)"],["38","Early 2nd (~#38)"],["52","Late 2nd (~#52)"],["65","Undrafted"]];
+const FATE_OPTS=[["none","None"],["star","Star"],["surprise","Surprise star"],["role","Role player"],["bust","Bust"],["steal","Steal"],["project","Project"]];
+const POSS=["PG","SG","SF","PF","C"];
+function defaultBuildInputs(){return {first:"",last:"",ft:6,inch:4,wt:"",ws:"auto",pos:"PG",pos2:"",age:"auto",bg:"College",school:"",country:"USA",tier:"auto",fate:"none",seed:randSeed(),skills:{},text:"",ath:{},weak:{}};}
+function defaultBuild(){return {inputs:defaultBuildInputs(),rr:0,lockedR:{},result:null,parsed:null};}
+function sgn(n){return (n>0?"+":"")+n;}
+
+function parseBackstory(t){
+  const out=[],miss=[];
+  String(t||"").toLowerCase().split(/[,;\n\/.]|\band\b|\bwith\b/).map(s=>" "+s.trim()).filter(s=>s.trim()).forEach(seg=>{
+    let hit=false;
+    const lvA=/elite|freak|explosive|world.?class|unreal/.test(seg)?5:/high.?end|great|strong|plus|really good|very good/.test(seg)?4:/below|subpar|meh/.test(seg)?2:/low.?end|slow|poor|bad|weak|lacks?|limited/.test(seg)?1:/average|decent|ok\b|okay/.test(seg)?3:4;
+    for(const [k,lab,,kw] of ATH){if(kw.some(w=>seg.includes(w))){let lv=lvA;if(k==="speed"&&/slow/.test(seg))lv=Math.min(lv,1);out.push({type:"ath",key:k,lvl:lv,seg:seg.trim(),label:lab.split(" (")[0]});hit=true;break;}}
+    if(hit)return;
+    const neg=/\b(can'?t|cannot|poor|bad|weak|struggles?|not|no|lacks?|limited|below|shaky|inconsistent|questionable)\b/.test(seg);
+    if(neg){for(const [k,W] of Object.entries(WEAK)){if(W.kw.some(w=>seg.includes(w))){out.push({type:"weak",key:k,seg:seg.trim(),label:W.label});hit=true;break;}}}
+    else{const lv=/elite|lockdown|lock down|best|special|incredible|unreal|world.?class|great at/.test(seg)?3:/\b(good|solid|decent|nice|ok)\b/.test(seg)?1:2;
+      for(const [k,Sk] of Object.entries(SKILLS)){if(Sk.kw.some(w=>seg.includes(w))){out.push({type:"skill",key:k,lvl:lv,seg:seg.trim(),label:Sk.label});hit=true;}}}
+    if(!hit)miss.push(seg.trim());
+  });
+  return {found:out,miss};
+}
+function pickArchetype(inp,ht){
+  const res=[];
+  for(const [name,A] of Object.entries(ARCHETYPES)){
+    const dist=ht<A.h[0]?A.h[0]-ht:ht>A.h[1]?ht-A.h[1]:0;
+    if(dist>3)continue; // height plausibility
+    let sc=A.pos.includes(inp.pos)?3:A.pos2.includes(inp.pos)?1:-4;
+    if(inp.pos2&&A.pos.concat(A.pos2).includes(inp.pos2))sc+=.5;
+    sc-=dist*1.2;
+    const hits=[];
+    for(const [k,lv] of Object.entries(inp.skills||{})){if(!lv||!SKILLS[k])continue;let d=0;for(const [rk,w] of Object.entries(SKILLS[k].r))d+=w*(A.prof[rk]||0);sc+=lv*d*.5;if(d>=2)hits.push(SKILLS[k].label);}
+    for(const [k,,map] of ATH){const lv=+(inp.ath||{})[k]||0;if(!lv)continue;const main=Object.keys(map)[0];sc+=(lv-3)*(A.prof[main]||0)*.3;}
+    for(const [k,on] of Object.entries(inp.weak||{})){if(!on||!WEAK[k])continue;for(const [rk,w] of Object.entries(WEAK[k].r))sc-=Math.max(0,A.prof[rk]||0)*w*.6;}
+    if(name==="Raw Project Big"&&inp.fate!=="project")sc-=2;
+    res.push({name,sc,dist,hits});
+  }
+  if(!res.length){const n=inp.pos==="C"||inp.pos==="PF"?"Rim-Running Big":inp.pos==="PG"?"Floor General":"Two-Way Wing";return {arch:n,reason:`Fallback for ${inp.pos} (no archetype within 3" of this height)`};}
+  res.sort((a,b)=>b.sc-a.sc);const b=res[0],A=ARCHETYPES[b.name];
+  const reason=`${inp.pos} at ${ftIn(ht)}: ${b.dist?`${b.dist}" outside`:"fits"} its ${ftIn(A.h[0])}–${ftIn(A.h[1])} range`+(b.hits.length?`; matches strengths: ${b.hits.join(", ")}`:"")+(res[1]?`. Runner-up: ${res[1].name}`:"");
+  return {arch:b.name,reason};
+}
+function autoPick(inp,fate){
+  let s=0;Object.values(inp.skills||{}).forEach(l=>s+=+l||0);
+  Object.values(inp.ath||{}).forEach(l=>{l=+l;if(l===5)s+=1;else if(l===4)s+=.5;else if(l===1)s-=.5;});
+  s-=Object.values(inp.weak||{}).filter(Boolean).length;
+  let pk=s>=9?3:s>=7?8:s>=5?15:s>=3?24:s>=1?36:50;
+  if(fate==="star")pk=Math.min(pk,5);if(fate==="bust")pk=Math.min(pk,8);
+  if(fate==="steal"||fate==="surprise")pk=Math.max(pk,25);if(fate==="project")pk=Math.max(pk,30);if(fate==="role")pk=clamp(pk,12,40);
+  return pk;
+}
+function singleBadges(p,A,inp){
+  const R=new Set();Object.entries(inp.skills||{}).forEach(([k,lv])=>{if(lv&&SKILLS[k])Object.entries(SKILLS[k].r).forEach(([rk,w])=>{if(w>=.7)R.add(rk);});});
+  const pool=new Set(A.badges);BADGES.forEach(b=>{if(b[4].some(k=>R.has(k)))pool.add(b[0]);});
+  const cand=[...pool].map(n=>BADGES.find(b=>b[0]===n)).filter(b=>b&&p.ht>=b[2]&&p.ht<=b[3]).map(b=>{
+    const v=Math.max(...b[4].map(k=>p.ratings[k]||0));const t=BADGE_TIERS.find(([n,th])=>v>=th&&(n!=="Hall of Fame"||p.gen));
+    return t?{name:b[0],cat:b[1],tier:t[0],v,rel:b[4].some(k=>R.has(k))?1:0}:null;}).filter(Boolean).sort((x,y)=>y.rel-x.rel||y.v-x.v||x.name.localeCompare(y.name));
+  const elites=Object.values(inp.skills||{}).filter(l=>+l===3).length;
+  const n=clamp(Math.round((p.ovr-60)/4)+3+elites,3,7);
+  // round-robin so each chosen skill gets badges (strongest first), then the rest by rating
+  const skillKeys=Object.entries(inp.skills||{}).filter(([k,l])=>l&&SKILLS[k]).sort((a,b)=>b[1]-a[1]).map(([k])=>k);
+  const groups=skillKeys.map(k=>cand.filter(c=>BADGES.find(b=>b[0]===c.name)[4].some(rk=>(SKILLS[k].r[rk]||0)>=.7)));
+  const order=[];for(let i=0;order.length<cand.length&&i<10;i++)groups.forEach(g=>{const c=g.find(x=>!order.includes(x));if(c&&order.length<n)order.push(c);});
+  cand.forEach(c=>{if(!order.includes(c))order.push(c);});
+  const out=order.slice(0,n).map(({name,cat,tier})=>({name,cat,tier}));
+  for(const nm of A.badges){if(out.length>=3)break;const b=BADGES.find(x=>x[0]===nm);if(b&&p.ht>=b[2]&&p.ht<=b[3]&&!out.some(x=>x.name===nm))out.push({name:nm,cat:b[1],tier:"Bronze"});}
+  return out;
+}
+function buildSingle(inp,rr,lockedR){
+  lockedR=lockedR||{};
+  const r=rngFor(inp.seed||"seed","single",rr||0);
+  const ht=clamp((+inp.ft||6)*12+(+inp.inch||0),66,90);
+  const {arch,reason}=pickArchetype(inp,ht),A=ARCHETYPES[arch];
+  const fate=inp.fate&&inp.fate!=="none"?inp.fate:"prospect";
+  const gen=inp.tier==="gen";
+  const pick=gen?1:inp.tier==="auto"?autoPick(inp,fate):+inp.tier;
+  const intl=inp.bg==="International";
+  const cty=(inp.country||"").trim().toLowerCase();
+  const nameSet=INTL.find(c=>c[0].toLowerCase()===cty);
+  const first=(inp.first||"").trim()||pickOne(r,nameSet?nameSet[1]:US_FIRST);
+  const last=(inp.last||"").trim()||pickOne(r,nameSet?nameSet[2]:US_LAST);
+  const age=inp.age==="auto"?(intl?20:19):+inp.age;
+  const classYr=intl?"Intl":inp.bg==="G League"?"Pro":age<=19?"FR":age===20?"SO":age===21?"JR":"SR";
+  const slope=(A.w[1]-A.w[0])/Math.max(1,A.h[1]-A.h[0]);
+  const wt=inp.wt?clamp(+inp.wt,150,330):clamp(Math.round(A.w[0]+(ht-A.h[0])*Math.max(slope,4)+ri(r,-5,5)),155,320);
+  const ws=inp.ws==="auto"?clamp(ri(r,A.ws[0],A.ws[1]),-2,6):clamp(+inp.ws,-4,6);
+  const p={id:uid(),slot:1000,fate,gen,arch,archReason:reason,first,last,pos:inp.pos,pos2:inp.pos2&&inp.pos2!==inp.pos?inp.pos2:"",ht,wt,ws,wsReal:ws,
+    bg:inp.bg,school:(inp.school||"").trim()||(intl?"Pro club":inp.bg==="G League"?"G League":"—"),country:(inp.country||"").trim()||"USA",age,classYr,pick,single:true,locked:false};
+  body(p,r,{shape:"none"});
+  // apply inputs, tracking why
+  const why={},base={...p.ratings},note=(k,s)=>(why[k]=why[k]||[]).push(s);
+  for(const [k,lab,map] of ATH){const lv=+(inp.ath||{})[k]||0;if(!lv)continue;const tgt=ATH_TGT[lv]+ri(r,-2,2);
+    for(const [rk,w] of Object.entries(map)){const v=p.ratings[rk],nv=clamp(Math.round(v+(tgt-v)*w),25,99);if(nv!==v){note(rk,`${lab.split(" (")[0]}: ${ATH_LV[lv]} ${sgn(nv-v)}`);p.ratings[rk]=nv;}}}
+  for(const [k,lv] of Object.entries(inp.skills||{})){if(!lv||!SKILLS[k])continue;
+    const sh=Math.round((p.ovr-70)/2);
+    for(const [rk,w] of Object.entries(SKILLS[k].r)){const v=p.ratings[rk];let nv=v+Math.round(LV_BOOST[lv]*w*.35);
+      if(w>=.9)nv=Math.max(nv,LV_FLOOR[lv]+sh+ri(r,0,3));else if(w>=.7)nv=Math.max(nv,LV_FLOOR[lv]-6+sh+ri(r,0,3));
+      if(nv>v)nv=Math.max(v,Math.min(nv,LV_CEIL[lv]));
+      nv=clamp(nv,25,99);if(nv!==v){note(rk,`${SKILLS[k].label} (${LEVELS[lv]}) ${sgn(nv-v)}`);p.ratings[rk]=nv;}}}
+  for(const [k,on] of Object.entries(inp.weak||{})){if(!on||!WEAK[k])continue;
+    for(const [rk,w] of Object.entries(WEAK[k].r)){const v=p.ratings[rk];let nv=v-Math.round(12*w);if(w>=.9)nv=Math.min(nv,66);nv=clamp(nv,25,99);if(nv!==v){note(rk,`Weakness: ${WEAK[k].label} ${sgn(nv-v)}`);p.ratings[rk]=nv;}}}
+  for(const [rk,v] of Object.entries(lockedR)){if(p.ratings[rk]!==v)note(rk,`🔒 locked at ${v}`);else note(rk,"🔒 locked");p.ratings[rk]=v;}
+  p.why=Object.entries(why).map(([k,l])=>({k,base:base[k],v:p.ratings[k],lines:l}));
+  p.badges=singleBadges(p,A,inp);
+  const sk=inp.skills||{},wk=inp.weak||{},T=p.tend;
+  if(sk.perD&&T["On-Ball Steal"]!=null)T["On-Ball Steal"]=clamp(T["On-Ball Steal"]+5*sk.perD,0,100);
+  if(sk.three&&T["Shot Three"]!=null)T["Shot Three"]=clamp(T["Shot Three"]+6*sk.three,0,100);
+  if(wk.shoot&&T["Shot Three"]!=null)T["Shot Three"]=clamp(T["Shot Three"]-25,0,100);
+  if(sk.pass&&T["Dish to Open Man"]!=null)T["Dish to Open Man"]=clamp(T["Dish to Open Man"]+6*sk.pass,0,100);
+  if((sk.finish||sk.dunk)&&T["Drive"]!=null)T["Drive"]=clamp(T["Drive"]+4*Math.max(sk.finish||0,sk.dunk||0),0,100);
+  if(sk.post&&T["Post Up"]!=null)T["Post Up"]=clamp(T["Post Up"]+10*sk.post,0,100);
+  p.inputs=JSON.parse(JSON.stringify(inp));p.lockedR={...lockedR};p.rr=rr||0;
+  return p;
+}
+function singlesClass(create){
+  let c=Object.values(S.classes).find(x=>x.kind==="singles");
+  if(!c&&create){const st=defaultSettings();st.fill=false;c={id:uid(),kind:"singles",settings:st,seed:"standalone",prospects:[],checks:{},created:0};S.classes[c.id]=c;}
+  return c;
+}
+function addToClass(cls,player,pick){
+  const q=JSON.parse(JSON.stringify(player));q.id=uid();q.locked=false;
+  q.slot=1000+cls.prospects.filter(x=>x.single).length+Math.floor(Math.random()*1e6);
+  const N=cls.prospects.length;
+  if(cls.kind==="singles"){q.pick=pick;cls.prospects.push(q);return q;}
+  if(cls.settings.fill){pick=clamp(pick,1,N+1);cls.prospects.forEach(x=>{if(x.pick>=pick)x.pick++;});}
+  else{pick=clamp(pick,1,99);let c=pick;cls.prospects.slice().sort((a,b)=>a.pick-b.pick).forEach(x=>{if(x.pick===c){x.pick++;c++;}});}
+  q.pick=pick;cls.prospects.push(q);return q;
+}
+
+/* ---------------- RENDER: build a player ---------------- */
+function inputsSummary(inp){if(!inp)return "";const sk=Object.entries(inp.skills||{}).filter(([,l])=>l).map(([k,l])=>`${SKILLS[k]?.label} ${LEVELS[l]}`);
+  const at=ATH.filter(([k])=>+(inp.ath||{})[k]).map(([k,lab])=>`${lab.split(" (")[0]} ${ATH_LV[inp.ath[k]]}`);const wk=Object.entries(inp.weak||{}).filter(([,o])=>o).map(([k])=>WEAK[k]?.label);
+  return [`${inp.ft}'${inp.inch}" ${inp.pos}${inp.pos2?"/"+inp.pos2:""}`,inp.school,sk.length?"Skills: "+sk.join(", "):"",at.length?"Athletic: "+at.join(", "):"",wk.length?"Weak: "+wk.join(", "):""].filter(Boolean).join(" | ");}
+const opt=(arr,v)=>arr.map(([k,l])=>`<option value="${esc(k)}" ${String(v)===String(k)?"selected":""}>${esc(l)}</option>`).join("");
+function renderBuildForm(){
+  const I=S.build.inputs;
+  const sel=(id,arr)=>{$(id).innerHTML=opt(arr,I[$(id).dataset.bi]);};
+  sel("#b_ft",[[5,"5 ft"],[6,"6 ft"],[7,"7 ft"]]);sel("#b_in",Array.from({length:12},(_,i)=>[i,i+" in"]));
+  sel("#b_ws",[["auto","Auto"],...[-4,-3,-2,-1,0,1,2,3,4,5,6].map(n=>[n,(n>=0?"+":"")+n+'"'])]);
+  sel("#b_pos",POSS.map(x=>[x,x]));sel("#b_pos2",[["","None"],...POSS.map(x=>[x,x])]);
+  sel("#b_age",[["auto","Auto"],...[18,19,20,21,22,23,24].map(n=>[n,n])]);
+  sel("#b_bg",[["College","College"],["International","International"],["G League","G League / pro path"],["Other","Other"]]);
+  sel("#b_tier",TIER_OPTS);sel("#b_fate",FATE_OPTS);
+  ["#b_first","#b_last","#b_wt","#b_school","#b_country","#b_seed","#b_text"].forEach(id=>{const el=$(id);if(document.activeElement!==el)el.value=I[el.dataset.bi]??"";});
+  $("#b_skills").innerHTML=Object.entries(SKILLS).map(([k,s])=>{const l=+I.skills[k]||0;return `<button class="chip ${l?"on":""}" data-skill="${k}">${esc(s.label)}${l?` · <b>${LEVELS[l]}</b>`:""}</button>`;}).join("");
+  $("#b_weak").innerHTML=Object.entries(WEAK).map(([k,w])=>`<button class="chip ${I.weak[k]?"on wk":""}" data-weak="${k}">${I.weak[k]?"✗ ":""}${esc(w.label)}</button>`).join("");
+  $("#b_ath").innerHTML=ATH.map(([k,lab])=>{const l=+I.ath[k]||0;return `<label class="f">${esc(lab)}: <b id="b_athv_${k}">${ATH_LV[l]}</b></label><input type="range" min="0" max="5" step="1" value="${l}" data-ath="${k}">`;}).join("")+
+    `<div class="tick"><span>Auto</span><span>Low</span><span>Below</span><span>Avg</span><span>High</span><span>Elite</span></div>`;
+  const P=S.build.parsed;
+  $("#b_parsed").innerHTML=P?`<div class="sec">Parsed (tap the chips above to fix)</div>`+(P.found.length?P.found.map(f=>`<div class="info">✓ ${f.type==="skill"?"Skill":f.type==="ath"?"Athletic":"Weakness"}: <b style="color:var(--txt)">${esc(f.label)}</b>${f.type==="skill"?" · "+LEVELS[f.lvl]:f.type==="ath"?" · "+ATH_LV[f.lvl]:""} ← “${esc(f.seg)}”</div>`).join(""):`<div class="info">Nothing recognized.</div>`)+
+    (P.miss.length?`<div class="info" style="color:var(--acc2)">? Not understood: ${P.miss.map(m=>"“"+esc(m)+"”").join(", ")}</div>`:""):"";
+}
+function renderBuildOut(){
+  const p=S.build.result,el=$("#b_out");
+  if(!p){el.innerHTML="";return;}
+  const L=S.build.lockedR,moved=new Set(p.why.map(w=>w.k));
+  let h=`<div class="card" id="b_result"><div class="pros"><div class="pk">${pickTxt(p)}<small>${esc(p.tier)}</small></div><div class="grow"><div class="nm" style="font-size:20px">${esc(p.first)} ${esc(p.last)}</div>
+   <div class="meta">${esc(p.pos)}${p.pos2?"/"+esc(p.pos2):""} · ${ftIn(p.ht)} · ${p.wt} lb · WS ${(p.ws>=0?"+":"")+p.ws}" · ${p.age}y · ${esc(p.school)} (${esc(p.country)})</div>
+   <div class="meta"><b style="color:var(--txt)">${esc(p.arch)}</b> · target ${p.ovr} OVR · POT ${p.potL} (${p.pot}) <span class="fate ${FATES[p.fate].cls}">${FATES[p.fate].icon} ${FATES[p.fate].label}</span></div></div></div>
+   <div class="info" style="margin-top:8px">🧠 <b>Archetype:</b> ${esc(p.archReason)}</div>
+   <div class="sec">Ratings <span class="info" style="text-transform:none;letter-spacing:0">(tap a rating to 🔒 lock it for re-rolls; ▲▼ = moved by your inputs)</span></div>`;
+  RATING_GROUPS.forEach(([g,list])=>{h+=`<div class="info" style="margin:8px 0 2px;font-weight:700">${esc(g)}</div><div class="rgrid">`+list.map(([k,n])=>{const w=p.why.find(x=>x.k===k),d=w?w.v-w.base:0;
+    return `<div class="rt ${L[k]!=null?"lk":""} ${moved.has(k)?"mv":""}" data-lockr="${k}"><span>${L[k]!=null?"🔒 ":""}${esc(n)}</span><b>${p.ratings[k]}${d?`<i class="${d>0?"up":"dn"}">${d>0?"▲":"▼"}</i>`:""}</b></div>`;}).join("")+`</div>`;});
+  h+=`<div class="sec">Potential (house rules)</div><div class="rgrid">`+POTENTIAL_ORDER.map(k=>`<div class="rt"><span>${POT_LABEL[k]}</span><b>${k==="pot"?`${p.pot} (${p.potL})`:(k==="bust"||k==="boom")?p[k]+"%":p[k]}</b></div>`).join("")+`</div>
+   <div class="sec">Badges (height-filtered; requirements unverified)</div><div>${p.badges.map(b=>`<span class="tb ${b.tier.replace(/ /g,"")}">${esc(b.name)} · ${esc(b.tier)}</span>`).join("")}</div>
+   <div class="sec">Key tendencies</div><div>${Object.entries(p.tend).map(([k,v])=>`<span class="tag">${esc(k)} ${v}</span>`).join("")}</div>
+   <div class="sec">Appearance &amp; style</div><div class="info">${p.notes.map(esc).join(" · ")}</div>
+   <div class="sec">Why: what your inputs changed</div>`+
+   (p.why.length?p.why.map(w=>`<div class="why"><b>${esc(RNAME[w.k])} ${w.v}</b> <span class="info">← template ${w.base}: ${w.lines.map(esc).join("; ")}</span></div>`).join(""):`<div class="info">No inputs changed ratings; this is the pure ${esc(p.arch)} template.</div>`)+
+   `<div class="note">House rules, not 2K's formula: archetype template + skill bumps (floors Good 75 / Great 82 / Elite 89, shifted by tier; ceilings 84 / 91 / 97) + athletic targets (Low 55, Below 65, Avg 74, High 83, Elite 92) + weaknesses (−12). 2K27 has no Acceleration or Lateral Quickness rating, so they map to Agility, Speed with Ball, and Perimeter Defense.</div></div>`;
+  const cls=Object.values(S.classes).filter(c=>c.kind!=="singles").sort((a,b)=>b.created-a.created);
+  h+=`<div class="grid2"><button id="b_reroll">🎲 Re-roll (keep inputs)</button><button id="b_save">⭐ Save standalone</button></div>
+   <div class="card"><div class="sec" style="margin-top:0">Add to a class</div>
+   ${cls.length?`<div class="grid2"><div><label class="f">Class</label><select id="b_cls">${cls.map(c=>`<option value="${c.id}" ${c.id===S.current?"selected":""}>${esc(className(c))} (${c.prospects.length})</option>`).join("")}</select></div>
+   <div><label class="f">At pick #</label><input type="number" inputmode="numeric" id="b_pick" min="1" max="99" value="${p.pick}"></div></div>
+   <div class="info" id="b_flowInfo"></div><button class="pri" id="b_add" style="width:100%;margin-top:8px">➕ Add to class</button>`:`<div class="info">No classes yet. Forge one in Setup first.</div>`}</div>`;
+  el.innerHTML=h;
+  const flow=()=>{const c=S.classes[$("#b_cls")?.value];if(!c)return;$("#b_flowInfo").textContent=c.settings.fill?`Fill 1–N is ON: he takes pick #${clamp(+$("#b_pick").value||1,1,c.prospects.length+1)} and everyone from there down slides back one (class becomes 1–${c.prospects.length+1}).`:`Spread picks: if that pick is taken, the players in the way slide back one.`;};
+  if($("#b_cls")){$("#b_cls").onchange=flow;$("#b_pick").oninput=flow;flow();}
+}
+function runBuild(rrDelta){
+  const B=S.build;if(rrDelta)B.rr=(B.rr||0)+1;
+  B.result=buildSingle(B.inputs,B.rr,B.lockedR);save();renderBuildOut();
+}
+function renderBuild(){renderBuildForm();renderBuildOut();}
 
 /* ---------------- RENDER: setup ---------------- */
 function renderClassSel(){
@@ -588,6 +878,7 @@ function renderSetup(){
     `<div class="cnt"><div class="lb"><b>Total builds</b><small>5–30; the rest auto-fill as ▫️ Solid Prospects</small></div>${stepper("total",st.total)}</div>`;
   const fixed=FATE_ORDER.reduce((s,f)=>s+st.counts[f],0);
   $("#s_fillPicks").checked=!!st.fill;
+  const sg=cur().kind==="singles";$("#s_singlesNote").style.display=sg?"":"none";$("#forgeBtn").disabled=sg;$("#rerollAll").disabled=sg;$("#forgeBtn").style.opacity=sg?.4:1;
   $("#s_fill").textContent=`${fixed} fated + ${Math.max(0,st.total-fixed)} solid prospects = ${Math.max(st.total,fixed)} builds`;
   [["g","G"],["w","W"],["b","B"]].forEach(([id,k])=>{$("#s_"+id).value=st.mix[k];$("#s_"+id+"v").textContent=st.mix[k];});
   $("#s_i").value=st.intl;$("#s_iv").textContent=st.intl;$("#s_o").value=st.older;$("#s_ov").textContent=st.older;
@@ -610,7 +901,7 @@ function renderBoard(){
       <div class="grow"><div class="nm">${esc(p.first)} ${esc(p.last)}</div>
         <div class="meta">${esc(p.pos)}${p.pos2?"/"+esc(p.pos2):""} · ${ftIn(p.ht)} · ${p.wt} lb · ${p.age}y · ${esc(p.school)}</div>
         <div class="meta"><b style="color:var(--txt)">${esc(p.arch)}</b> · target ${p.ovr} OVR · POT ${p.potL} (${p.pot})</div>
-        <div>${fateBadge(p)} <span class="tag">Card ${done}/${prog.length}</span></div></div>
+        <div>${p.single?`<span class="fate f-prospect">🛠️ Custom</span> `:""}${fateBadge(p)} <span class="tag">Card ${done}/${prog.length}</span></div></div>
       <div class="ic"><button data-lock="${p.id}" class="${p.locked?"on":""}" aria-label="Lock">${p.locked?"🔒":"🔓"}</button><button data-reroll="${p.id}" aria-label="Re-roll">🎲</button><button data-card="${p.id}" aria-label="Open card">✅</button></div>
     </div></div>`;}).join(""):`<div class="empty">No builds yet. Go to Setup → ⚒️ Forge class.</div>`;
 }
@@ -658,8 +949,8 @@ function download(name,text,type){const b=new Blob([text],{type});const a=docume
 const csvCell=v=>{v=v==null?"":String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
 function buildCsv(c){
   const rk=RATING_GROUPS.flatMap(g=>g[1]);
-  const head=["Year","Pick","Tier","First","Last","Pos","Pos2","Height","Weight_lb","Wingspan_in","Age","Background","School","Nationality","Archetype","Fate","Target_OVR","Potential","Pot_Letter","Min_Pot","Max_Pot","Bust_pct","Boom_pct","Peak_Start","Peak_End",...rk.map(([,n])=>n),"Badges","Tendencies","Appearance","Locked"];
-  const rows=sorted().map(p=>[c.settings.year,p.pick>60?"UDFA":p.pick,p.tier,p.first,p.last,p.pos,p.pos2,ftIn(p.ht),p.wt,p.ws,p.age,p.bg,p.school,p.country,p.arch,FATES[p.fate].label,p.ovr,p.pot,p.potL,p.minPot,p.maxPot,p.bust,p.boom,p.peakStart,p.peakEnd,...rk.map(([k])=>p.ratings[k]),p.badges.map(b=>`${b.name} (${b.tier})`).join("; "),Object.entries(p.tend).map(([k,v])=>`${k} ${v}`).join("; "),p.notes.join("; "),p.locked?"yes":""]);
+  const head=["Year","Pick","Tier","First","Last","Pos","Pos2","Height","Weight_lb","Wingspan_in","Age","Background","School","Nationality","Archetype","Fate","Target_OVR","Potential","Pot_Letter","Min_Pot","Max_Pot","Bust_pct","Boom_pct","Peak_Start","Peak_End",...rk.map(([,n])=>n),"Badges","Tendencies","Appearance","Locked","Source","Archetype_Reason","Build_Inputs"];
+  const rows=sorted().map(p=>[c.settings.year,p.pick>60?"UDFA":p.pick,p.tier,p.first,p.last,p.pos,p.pos2,ftIn(p.ht),p.wt,p.ws,p.age,p.bg,p.school,p.country,p.arch,FATES[p.fate].label,p.ovr,p.pot,p.potL,p.minPot,p.maxPot,p.bust,p.boom,p.peakStart,p.peakEnd,...rk.map(([k])=>p.ratings[k]),p.badges.map(b=>`${b.name} (${b.tier})`).join("; "),Object.entries(p.tend).map(([k,v])=>`${k} ${v}`).join("; "),p.notes.join("; "),p.locked?"yes":"",p.single?"Build-a-Player":"Generated",p.archReason||"",p.single?inputsSummary(p.inputs):""]);
   return [head,...rows].map(r=>r.map(csvCell).join(",")).join("\n");
 }
 function importJson(txt){
@@ -670,8 +961,8 @@ function importJson(txt){
 }
 
 /* ---------------- WIRING ---------------- */
-function renderAll(){renderClassSel();renderSetup();renderBoard();if($("#v-card").classList.contains("on"))renderCard();}
-function show(v){document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));if(v==="card")renderCard();if(v==="board")renderBoard();if(v==="setup")renderSetup();window.scrollTo(0,0);}
+function renderAll(){renderClassSel();renderSetup();renderBoard();if($("#v-build").classList.contains("on"))renderBuild();if($("#v-card").classList.contains("on"))renderCard();}
+function show(v){document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));if(v==="card")renderCard();if(v==="board")renderBoard();if(v==="setup")renderSetup();if(v==="build")renderBuild();window.scrollTo(0,0);}
 document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
 $("#classSel").onchange=e=>{S.current=e.target.value;cardIdx=0;save();renderAll();};
 $("#newClassBtn").onclick=()=>{const st=JSON.parse(JSON.stringify(cur().settings));st.year=+st.year+1;const c=newClass(st);S.classes[c.id]=c;S.current=c.id;save();renderAll();show("setup");toast("New class: "+st.year);};
@@ -688,8 +979,8 @@ $("#s_o").oninput=e=>{cur().settings.older=+e.target.value;$("#s_ov").textConten
 $("#s_counts").onclick=e=>{const b=e.target.closest("[data-st]");if(!b)return;const st=cur().settings,k=b.dataset.st,d=+b.dataset.d;
   if(k==="total")st.total=clamp(st.total+d,5,30);else{st.counts[k]=clamp(st.counts[k]+d,0,30);const fixed=FATE_ORDER.reduce((s,f)=>s+st.counts[f],0);if(fixed>30){st.counts[k]-=1;toast("Max 30 builds");}else if(fixed>st.total)st.total=fixed;}
   save();renderSetup();};
-$("#forgeBtn").onclick=()=>{forge(cur());cardIdx=0;save();renderAll();show("board");toast(`Forged ${cur().prospects.length} builds ⚒️`);};
-$("#rerollAll").onclick=()=>{cur().seed=randSeed();forge(cur());save();renderAll();show("board");toast("Re-rolled (locked kept)");};
+$("#forgeBtn").onclick=()=>{if(cur().kind==="singles")return toast("Standalone list: use 🛠️ Build");forge(cur());cardIdx=0;save();renderAll();show("board");toast(`Forged ${cur().prospects.length} builds ⚒️`);};
+$("#rerollAll").onclick=()=>{if(cur().kind==="singles")return;cur().seed=randSeed();forge(cur());save();renderAll();show("board");toast("Re-rolled (locked kept)");};
 $("#toBoard").onclick=()=>show("board");
 $("#spoilBtn").onclick=()=>{S.showFates=!S.showFates;save();renderBoard();};
 $("#bList").onclick=e=>{const c=cur();
@@ -705,7 +996,22 @@ $("#impFileBtn").onclick=()=>$("#impFile").click();
 $("#impFile").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(importJson);e.target.value="";};
 $("#impPaste").onclick=()=>{if(importJson($("#impText").value))$("#impText").value="";};
 $("#delClass").onclick=()=>{if(!confirm("Delete this class?"))return;delete S.classes[S.current];normalize();S.current=Object.keys(S.classes)[0];save();renderAll();toast("Deleted");};
-window.__CF={get state(){return S;},forge,rerollOne,buildCsv,cur};
+document.querySelectorAll("[data-bi]").forEach(el=>{const ev=el.tagName==="SELECT"?"change":"input";el.addEventListener(ev,()=>{const k=el.dataset.bi;let v=el.value;if(k==="ft"||k==="inch")v=+v;S.build.inputs[k]=v;save();});});
+$("#b_newSeed").onclick=()=>{S.build.inputs.seed=randSeed();S.build.rr=0;save();renderBuildForm();};
+$("#b_skills").onclick=e=>{const b=e.target.closest("[data-skill]");if(!b)return;const I=S.build.inputs,k=b.dataset.skill;I.skills[k]=((+I.skills[k]||0)+1)%4;if(!I.skills[k])delete I.skills[k];save();renderBuildForm();};
+$("#b_weak").onclick=e=>{const b=e.target.closest("[data-weak]");if(!b)return;const I=S.build.inputs,k=b.dataset.weak;if(I.weak[k])delete I.weak[k];else I.weak[k]=true;save();renderBuildForm();};
+$("#b_ath").oninput=e=>{const k=e.target.dataset.ath;if(!k)return;const v=+e.target.value;if(v)S.build.inputs.ath[k]=v;else delete S.build.inputs.ath[k];$("#b_athv_"+k).textContent=ATH_LV[v];save();};
+$("#b_parse").onclick=()=>{const I=S.build.inputs,P=parseBackstory(I.text);P.found.forEach(f=>{if(f.type==="skill")I.skills[f.key]=Math.max(+I.skills[f.key]||0,f.lvl);else if(f.type==="ath")I.ath[f.key]=f.lvl;else I.weak[f.key]=true;});S.build.parsed=P;save();renderBuildForm();toast(`Read ${P.found.length} item${P.found.length===1?"":"s"}`);};
+$("#b_go").onclick=()=>{S.build.lockedR={};S.build.rr=0;runBuild(0);$("#b_result").scrollIntoView({block:"start"});window.scrollBy(0,-120);toast("Player built 🛠️");};
+$("#b_resetForm").onclick=()=>{if(!confirm("Clear the form?"))return;S.build=defaultBuild();save();renderBuild();};
+$("#b_out").onclick=e=>{const B=S.build,p=B.result;if(!p)return;
+  const r=e.target.closest("[data-lockr]");
+  if(r){const k=r.dataset.lockr;if(B.lockedR[k]!=null)delete B.lockedR[k];else B.lockedR[k]=p.ratings[k];p.lockedR={...B.lockedR};save();renderBuildOut();return;}
+  if(e.target.closest("#b_reroll")){runBuild(1);toast("Re-rolled (inputs + 🔒 kept)");return;}
+  if(e.target.closest("#b_save")){const c=singlesClass(true);addToClass(c,p,p.pick);save();renderClassSel();toast("Saved to ★ Standalone builds");return;}
+  if(e.target.closest("#b_add")){const c=S.classes[$("#b_cls").value];if(!c)return;const q=addToClass(c,p,+$("#b_pick").value||p.pick);S.current=c.id;cardIdx=0;save();renderClassSel();toast(`Added to ${className(c)} at #${q.pick}`);renderBuildOut();return;}
+};
+window.__CF={get state(){return S;},forge,rerollOne,buildCsv,cur,buildSingle,parseBackstory,addToClass,pickArchetype};
 renderAll();
 </script>
 </body>
